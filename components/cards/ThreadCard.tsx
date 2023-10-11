@@ -10,6 +10,8 @@ interface Props {
   id: string;
   currentUserId: string;
   parentId: string | null;
+  title: string;
+  imageUpload: string;
   content: string;
   author: {
     name: string;
@@ -37,6 +39,8 @@ function ThreadCard({
   id,
   currentUserId,
   parentId,
+  title,
+  imageUpload,
   content,
   author,
   createdAt,
@@ -72,9 +76,17 @@ function ThreadCard({
                 {author.name}
               </h4>
             </Link>
-
+            <h2 className="text-xl font-semibold text-light-1">{title}</h2>
             <p className="mt-2 text-small-regular text-light-2">{content}</p>
-
+            {imageUpload && (
+              <Image
+                src={imageUpload}
+                alt="Thread image"
+                width={500}
+                height={300}
+                className="mt-4 rounded-lg"
+              />
+            )}
             <div className={`${isComment && "mb-10"} mt-5 flex flex-col gap-3`}>
               <div className="flex gap-3.5">
                 <ReactThread

@@ -94,6 +94,8 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
 }
 
 interface Params {
+  title: string;
+  imageUpload: string;
   text: string;
   author: string;
   path: string;
@@ -127,6 +129,8 @@ export async function editThread({
   }
 }
 export async function createThread({
+  title,
+  imageUpload,
   text,
   author,
   path,
@@ -135,6 +139,8 @@ export async function createThread({
     connectToDB();
 
     const createdThread = await Thread.create({
+      title,
+      imageUpload,
       text,
       author,
     });

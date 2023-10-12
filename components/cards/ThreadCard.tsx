@@ -16,11 +16,6 @@ interface Props {
     image: string;
     id: string;
   };
-  community: {
-    id: string;
-    name: string;
-    image: string;
-  } | null;
   createdAt: string;
   comments: {
     author: {
@@ -44,7 +39,6 @@ function ThreadCard({
   parentId,
   content,
   author,
-  community,
   createdAt,
   comments,
   reactions,
@@ -99,20 +93,7 @@ function ThreadCard({
                     className="cursor-pointer object-contain"
                   />
                 </Link>
-                <Image
-                  src="/assets/repost.svg"
-                  alt="repost"
-                  width={24}
-                  height={24}
-                  className="cursor-pointer object-contain"
-                />
-                <Image
-                  src="/assets/share.svg"
-                  alt="share"
-                  width={24}
-                  height={24}
-                  className="cursor-pointer object-contain"
-                />
+              
               </div>
 
               <div className="flex flex-row gap-2">
@@ -220,26 +201,6 @@ function ThreadCard({
           </>
         )}
       </div>
-
-      {!isComment && community && (
-        <Link
-          href={`/communities/${community.id}`}
-          className="mt-5 flex items-center"
-        >
-          <p className="text-subtle-medium text-gray-1">
-            {formatDateString(createdAt)}
-            {community && ` - ${community.name} Community`}
-          </p>
-
-          <Image
-            src={community.image}
-            alt={community.name}
-            width={14}
-            height={14}
-            className="ml-1 rounded-full object-cover"
-          />
-        </Link>
-      )}
     </article>
   );
 }

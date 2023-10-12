@@ -37,7 +37,7 @@ function UserCard({ id, name, username, imgUrl, personType }: Props) {
       <Button
         className="user-card_btn"
         onClick={() =>
-          router.push(personType === "User" ? `/profile/${id}` : `/communities/${id}`)
+          router.push(`/profile/${id}`)
         }
       >
         View

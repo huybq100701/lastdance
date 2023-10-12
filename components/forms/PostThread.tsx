@@ -51,7 +51,6 @@ function PostThread({ userId, threadId, threadText }: Props) {
       await createThread({
         text: values.thread,
         author: userId,
-        communityId: organization ? organization.id : null,
         path: pathname,
       });
     }

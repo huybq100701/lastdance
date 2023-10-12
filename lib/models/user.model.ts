@@ -51,6 +51,19 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  communities: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Community",
+    },
+  ],
+
+  events: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Event',
+    },
+  ],
 });
 
 userSchema.virtual("threadsCount").get(function () {
@@ -65,6 +78,9 @@ userSchema.virtual("followingCount").get(function () {
   return this.following.length;
 });
 
+userSchema.virtual("communitiesCount").get(function () {
+  return this.communities.length;
+});
 
 userSchema.virtual("reactionsCount").get(function () {
   return this.reactions.length;

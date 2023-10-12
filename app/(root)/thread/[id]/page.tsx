@@ -42,9 +42,8 @@ async function Page({ params }: { params: { id: string } }) {
           currentUserId={user.id}
           parentId={thread.parentId}
           content={thread.text}
-          title={thread.title}
-          imageUpload={thread.imageUpload}
           author={thread.author}
+          community={thread.community}
           createdAt={thread.createdAt}
           comments={thread.children}
           reactions={parentReactions.users}
@@ -68,9 +67,8 @@ async function Page({ params }: { params: { id: string } }) {
             currentUserId={user.id}
             parentId={childItem.parentId}
             content={childItem.text}
-            title = {childItem.title}
-            imageUpload = {childItem.imageUpload}
             author={childItem.author}
+            community={childItem.community}
             createdAt={childItem.createdAt}
             comments={childItem.children}
             reactions={childrenReactions[idx].users}

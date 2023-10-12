@@ -10,14 +10,17 @@ interface Props {
   id: string;
   currentUserId: string;
   parentId: string | null;
-  title: string;
-  imageUpload: string;
   content: string;
   author: {
     name: string;
     image: string;
     id: string;
   };
+  community: {
+    id: string;
+    name: string;
+    image: string;
+  } | null;
   createdAt: string;
   comments: {
     author: {
@@ -39,10 +42,9 @@ function ThreadCard({
   id,
   currentUserId,
   parentId,
-  title,
-  imageUpload,
   content,
   author,
+  community,
   createdAt,
   comments,
   reactions,
@@ -76,17 +78,9 @@ function ThreadCard({
                 {author.name}
               </h4>
             </Link>
-            <h2 className="text-xl font-semibold text-light-1">{title}</h2>
+
             <p className="mt-2 text-small-regular text-light-2">{content}</p>
-            {imageUpload && (
-              <Image
-                src={imageUpload}
-                alt="Thread image"
-                width={500}
-                height={300}
-                className="mt-4 rounded-lg"
-              />
-            )}
+
             <div className={`${isComment && "mb-10"} mt-5 flex flex-col gap-3`}>
               <div className="flex gap-3.5">
                 <ReactThread
@@ -105,9 +99,21 @@ function ThreadCard({
                     className="cursor-pointer object-contain"
                   />
                 </Link>
-               
+                <Image
+                  src="/assets/repost.svg"
+                  alt="repost"
+                  width={24}
+                  height={24}
+                  className="cursor-pointer object-contain"
+                />
+                <Image
+                  src="/assets/share.svg"
+                  alt="share"
+                  width={24}
+                  height={24}
+                  className="cursor-pointer object-contain"
+                />
               </div>
-              <p className="mt-2 text-small-regular text-light-2">{formatDateString(createdAt)}</p>
 
               <div className="flex flex-row gap-2">
                 {isComment && (
@@ -183,6 +189,11 @@ function ThreadCard({
               </div>
             )}
 
+            {/* {comments.length > 0 && reactions.length > 0 && (
+              <div className="ml-1 mt-3 flex items-center">
+                <p className="mt-1 text-subtle-medium text-gray-1">•</p>
+              </div>
+            )} */}
 
             {reactions.length > 0 && (
               <div className="ml-1 mt-3 flex items-center gap-2">
@@ -209,6 +220,26 @@ function ThreadCard({
           </>
         )}
       </div>
+
+      {!isComment && community && (
+        <Link
+          href={`/communities/${community.id}`}
+          className="mt-5 flex items-center"
+        >
+          <p className="text-subtle-medium text-gray-1">
+            {formatDateString(createdAt)}
+            {community && ` - ${community.name} Community`}
+          </p>
+
+          <Image
+            src={community.image}
+            alt={community.name}
+            width={14}
+            height={14}
+            className="ml-1 rounded-full object-cover"
+          />
+        </Link>
+      )}
     </article>
   );
 }

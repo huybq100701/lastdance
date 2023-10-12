@@ -12,14 +12,6 @@ const reactionSchema = new mongoose.Schema({
 });
 
 const threadSchema = new mongoose.Schema({
-  title:{
-    type: String,
-    required: true,
-  },
-  imageUpload: {
-    type: String,
-    required: false,
-  },
   text: {
     type: String,
     required: true,
@@ -28,6 +20,10 @@ const threadSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
+  },
+  community: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Community",
   },
   createdAt: {
     type: Date,

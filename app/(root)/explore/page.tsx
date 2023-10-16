@@ -4,10 +4,10 @@ import { redirect } from "next/navigation";
 import ThreadCard from "@/components/cards/ThreadCard";
 import Pagination from "@/components/shared/Pagination";
 
-import { fetchPosts, getReactionsData } from "@/lib/actions/thread.actions";
+import { fetchExplore, getReactionsData } from "@/lib/actions/thread.actions";
 import { fetchUser } from "@/lib/actions/user.actions";
 
-async function Home({
+async function Explore({
   searchParams,
 }: {
   searchParams: { [key: string]: string | undefined };
@@ -18,10 +18,11 @@ async function Home({
   const userInfo = await fetchUser(user.id);
   if (!userInfo?.onboarded) redirect("/onboarding");
 
-  const result = await fetchPosts(
-    searchParams.page ? +searchParams.page : 1,
-    30
-  );
+  const result = await fetchExplore({
+    userId: user.id,
+    pageNumber: searchParams?.page ? +searchParams.page : 1,
+    pageSize: 30,
+  });
 
   const reactionsData = await getReactionsData({
     userId: userInfo._id,
@@ -32,7 +33,7 @@ async function Home({
 
   return (
     <>
-      <h1 className="head-text text-left">Home</h1>
+      <h1 className="head-text text-left">Explore</h1>
 
       <section className="mt-9 flex flex-col gap-10">
         {result.posts.length === 0 ? (
@@ -67,4 +68,4 @@ async function Home({
   );
 }
 
-export default Home;
+export default Explore;

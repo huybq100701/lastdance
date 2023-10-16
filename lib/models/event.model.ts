@@ -1,20 +1,16 @@
-import mongoose from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 
-const eventSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true,
-  },
+export interface EventDocument extends Document {
+  title: string;
+  location: string;
+  currentUserId: string;
+  opponentId: string;
+  eventTime: Date;
+  description: string;
+}
+
+const eventSchema = new Schema({
   title: {
-    type: String,
-    required: true,
-  },
-  currentUserId:{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  opponentId: {
     type: String,
     required: true,
   },
@@ -22,18 +18,24 @@ const eventSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  description: String,
-  createdAt: {
-    type: Date,
-    default: Date.now,
+  currentUserId: {
+    type: String,
+    required: true,
+  },
+  opponentId: {
+    type: String,
+    required: true,
   },
   eventTime: {
     type: Date,
     required: true,
   },
+  description: {
+    type: String,
+    required: true,
+  },
 });
 
-
-const Event = mongoose.models.Event || mongoose.model('Event', eventSchema);
+export const Event = model<EventDocument>('Event', eventSchema);
 
 export default Event;

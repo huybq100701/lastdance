@@ -43,7 +43,7 @@ function ProfileHeader({
             <p className="text-base-medium text-gray-1">@{username}</p>
           </div>
         </div>
-        {type !== "Community" && (
+        {type === "User" && (
           <div className="flex flex-row gap-2">
             <>
               {accountId === authUserId ? (

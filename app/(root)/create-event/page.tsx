@@ -1,13 +1,14 @@
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-import EventThread from "@/components/forms/EventThread";
 import { fetchUser } from "@/lib/actions/user.actions";
+import EventThread from "@/components/forms/EventThread";
 
 async function Page() {
   const user = await currentUser();
   if (!user) return null;
 
+  // fetch organization list created by user
   const userInfo = await fetchUser(user.id);
   if (!userInfo?.onboarded) redirect("/onboarding");
 

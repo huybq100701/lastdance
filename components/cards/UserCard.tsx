@@ -11,12 +11,16 @@ interface Props {
   username: string;
   imgUrl: string;
   personType: string;
+  opponentId: string;
 }
 
-function UserCard({ id, name, username, imgUrl, personType }: Props) {
+function UserCard({ id, name, username, imgUrl, personType, opponentId }: Props) {
   const router = useRouter();
 
-  return (
+  const handleCreateEvent = (opponentId) => {
+  };
+
+  return (    
     <article className="user-card">
       <div className="user-card_avatar">
         <div className="relative h-12 w-12">
@@ -37,10 +41,16 @@ function UserCard({ id, name, username, imgUrl, personType }: Props) {
       <Button
         className="user-card_btn"
         onClick={() =>
-          router.push(personType === "User" ? `/profile/${id}` : `/communities/${id}`)
+          router.push( `/profile/${id}`)
         }
       >
         View
+      </Button>
+      <Button
+        className="user-card_btn"
+        onClick={handleCreateEvent}
+      >
+        Create Event
       </Button>
     </article>
   );

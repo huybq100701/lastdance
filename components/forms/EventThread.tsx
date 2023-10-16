@@ -1,4 +1,5 @@
 "use client"
+import React, { useEffect, useState } from "react";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,65 +8,67 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { EventValidation } from "@/lib/validations/event";
-import Searchbar from "../shared/Searchbar";
-import { createEvent, editEvent } from "@/lib/actions/event.actions";
+import UserCard from "../cards/UserCard";
 
 interface Props {
   userId: string;
-  threadId?: string;
-  threadText?: string;
+  eventId?: string;
+  eventText?: string;
+  opponentId: string;
 }
 
-function EventThread({ userId, threadId, threadText }: Props) {
+function EventThread({ userId, eventId, eventText, opponentId }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+
+  const [selectedUser, setSelectedUser] = useState<string>("");
 
   const form = useForm<z.infer<typeof EventValidation>>({
     resolver: zodResolver(EventValidation),
     defaultValues: {
-      title: threadText || "",
-      location: "", 
-      eventTime: "", 
+      title: eventText || "",
+      location: "",
+      eventTime: new Date().toISOString().substring(0, 16),
       description: "",
-      opponentId: "", 
+      opponentId: opponentId,
       currentUserId: userId,
     },
   });
 
   const onSubmit = async (values: z.infer<typeof EventValidation>) => {
-    
-    // if (threadId && threadText) {
-    //   await editEvent({
-    //     eventId: threadId,
-    //     title: values.title,
-    //     location: values.location,
-    //     eventTime: values.eventTime,
-    //     description: values.description,
-    //     path: pathname,
-    //   });
-    // } else {
-      try{
+    try {
+      if (eventId && eventText) {
+        await editEvent({
+          eventId: eventId,
+          title: values.title,
+          location: values.location,
+          eventTime: new Date(values.eventTime),
+          description: values.description,
+          path: pathname,
+        });
+      } else {
         await createEvent({
           title: values.title,
           location: values.location,
           currentUserId: userId,
           opponentId: values.opponentId,
-          eventTime: values.eventTime,
+          eventTime: new Date(values.eventTime),
           description: values.description,
           path: pathname,
-        });     
-
-    router.push("/");
-      }catch (error){
-        console.error("Error creating event:" , error)
+        });
       }
+
+      router.push("/");
+    } catch (error) {
+      console.error("Lỗi khi tạo hoặc chỉnh sửa sự kiện:", error);
+    }
   };
 
   return (
     <Form {...form}>
       <form
         className="mt-10 flex flex-col justify-start gap-10"
-        // onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onSubmit)}
       >
         <FormField
           control={form.control}
@@ -73,7 +76,7 @@ function EventThread({ userId, threadId, threadText }: Props) {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="text-base-semibold text-light-2">
-                Title
+                Tiêu đề
               </FormLabel>
               <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
                 <Textarea rows={5} {...field} />
@@ -82,26 +85,28 @@ function EventThread({ userId, threadId, threadText }: Props) {
             </FormItem>
           )}
         />
-          <FormField
-            control={form.control}
-            name="opponentId"
-            render={({ field }) => (
-              <FormItem className="flex w-full flex-col gap-3">
-                <FormLabel className="text-base-semibold text-light-2">
-                  Opponent
-                </FormLabel>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        <Searchbar routeType='create-event' />
+        <FormField
+          control={form.control}
+          name="opponentId"
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col gap-3">
+              <FormLabel className="text-base-semibold text-light-2">
+                Đối thủ
+              </FormLabel>
+              <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
+                <input type="text" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="location"
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="text-base-semibold text-light-2">
-                Location
+                Địa điểm
               </FormLabel>
               <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
                 <input type="text" {...field} />
@@ -116,7 +121,7 @@ function EventThread({ userId, threadId, threadText }: Props) {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="text-base-semibold text-light-2">
-                Event Time
+                Thời gian sự kiện
               </FormLabel>
               <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
                 <input type="datetime-local" {...field} />
@@ -131,7 +136,7 @@ function EventThread({ userId, threadId, threadText }: Props) {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="text-base-semibold text-light-2">
-                Description
+                Mô tả
               </FormLabel>
               <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
                 <Textarea rows={5} {...field} />
@@ -140,11 +145,9 @@ function EventThread({ userId, threadId, threadText }: Props) {
             </FormItem>
           )}
         />
-         
 
-     
-        <Button type="submit" className="bg-lime-500">
-          {threadId ? "Edit" : "Create"} Event Thread
+        <Button type="submit" className="bg-primary-500">
+          {eventId ? "Chỉnh sửa" : "Tạo"} Sự kiện
         </Button>
       </form>
     </Form>

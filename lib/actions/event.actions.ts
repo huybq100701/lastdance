@@ -1,7 +1,15 @@
-import { connectToDB } from "../mongoose";
-import EventThread from "../models/event.model";
-import User from "../models/user.model";
-import { revalidatePath } from "next/cache";
+import { connectToDB } from '../mongoose';
+import Event from '../models/event.model';
+import { Model, Document } from 'mongoose';
+import { revalidatePath } from 'next/cache';
+
+interface UserDocument extends Document {
+  _id: string;
+  events: string[];
+  // other fields
+}
+
+const User: Model<UserDocument> = require('../models/user.model').default;
 
 export async function createEvent({
   title,
@@ -23,7 +31,7 @@ export async function createEvent({
   try {
     connectToDB();
 
-    const createdEvent = await EventThread.create({
+    const createdEvent = await Event.create({
       title,
       location,
       currentUserId,
@@ -60,10 +68,10 @@ export async function editEvent({
   try {
     connectToDB();
 
-    const event = await EventThread.findById(eventId);
+    const event = await Event.findById(eventId);
 
     if (!event) {
-      throw new Error("Event not found");
+      throw new Error('Event not found');
     }
 
     event.title = title;
@@ -78,4 +86,3 @@ export async function editEvent({
     throw new Error(`Failed to edit event: ${error.message}`);
   }
 }
-

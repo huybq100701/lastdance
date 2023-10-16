@@ -2,9 +2,7 @@ import { currentUser } from "@clerk/nextjs";
 
 import UserCard from "../cards/UserCard";
 
-
 import { fetchCommunities } from "@/lib/actions/community.actions";
-
 import { fetchUsers } from "@/lib/actions/user.actions";
 
 async function RightSidebar() {
@@ -15,7 +13,6 @@ async function RightSidebar() {
     userId: user.id,
     pageSize: 4,
   });
-
 
   const suggestedCommunities = await fetchCommunities({ pageSize: 4 });
 
@@ -47,10 +44,6 @@ async function RightSidebar() {
           )}
         </div>
       </div>
-
-  return (
-    <section className="custom-scrollbar rightsidebar">
-
       <div className="flex flex-1 flex-col justify-start">
         <h3 className="text-heading4-medium text-light-1">Similar Minds</h3>
         <div className="mt-7 flex w-[350px] flex-col gap-10">

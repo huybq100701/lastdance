@@ -81,20 +81,6 @@ export async function isUserFollowing(followerId: string, followedId: string) {
   }
 }
 
-export async function fetchEvents(userId) {
-  try {
-    connectToDB();
-
-    const events = await Event.find({
-      $or: [{ currentUserId: userId }, { opponentId: userId }],
-    }).exec();
-
-    return events;
-  } catch (error) {
-    console.error("Error fetching events: ", error);
-    throw error;
-  }
-}
 
 
 export async function fetchUser(userId: string) {

@@ -13,7 +13,7 @@ interface Props {
   personType: string;
 }
 
-function UserCard({ id, name, username, imgUrl, personType }: Props) {
+function UserCard({ id, name, username, imgUrl }: Props) {
   const router = useRouter();
 
   return (

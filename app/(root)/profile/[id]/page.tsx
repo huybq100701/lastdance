@@ -1,22 +1,19 @@
 import Image from "next/image";
 import { currentUser } from "@clerk/nextjs";
-import { redirect } from "next/navigation"; 
+import { redirect } from "next/navigation";
 
 import { profileTabs } from "@/constants";
 
 import ThreadsTab from "@/components/shared/ThreadsTab";
 import ProfileHeader from "@/components/shared/ProfileHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, momentLocalizer } from "react-big-calendar";
-import React from "react";
+
 import {
   fetchUser,
   fetchUsersByField,
   isUserFollowing,
 } from "@/lib/actions/user.actions";
 import UserCard from "@/components/cards/UserCard";
-import moment from "moment";
-import MyCalendar from "@/components/cards/EventCard";
 
 async function Page({ params }: { params: { id: string } }) {
   const user = await currentUser();
@@ -30,7 +27,7 @@ async function Page({ params }: { params: { id: string } }) {
 
   const isFollowing = await isUserFollowing(user.id, params.id);
 
-  return (  
+  return (
     <section>
       <ProfileHeader
         accountId={userInfo.id}
@@ -75,7 +72,7 @@ async function Page({ params }: { params: { id: string } }) {
           </TabsList>
 
           <TabsContent value="threads" className="w-full text-light-1">
-            {/* @ts-ignore */}
+            {/* @ts-ignore */}{" "}
             {userInfo.threadsCount === 0 ? (
               <div className="mt-9 flex flex-col gap-10">
                 <p className="no-result">No threads found</p>
@@ -130,14 +127,9 @@ async function Page({ params }: { params: { id: string } }) {
               )}
             </div>
           </TabsContent>
-
-          <TabsContent  value = "events" className="w-full text-light-1">
-              <MyCalendar/>
-          </TabsContent>
         </Tabs>
       </div>
     </section>
   );
 }
-
 export default Page;

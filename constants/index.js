@@ -25,15 +25,9 @@ export const sidebarLinks = [
       label: "Create Thread",
     },
     {
-
       imgURL: "/assets/community.svg",
       route: "/communities",
       label: "Communities",
-
-      imgURL: "/assets/event.svg",
-      route: "/create-event",
-      label: "Create Event",
-
     },
     {
       imgURL: "/assets/user.svg",
@@ -46,7 +40,6 @@ export const sidebarLinks = [
     { value: "threads", label: "Threads", icon: "/assets/reply.svg" },
     { value: "followers", label: "Followers", icon: "/assets/members.svg" },
     { value: "following", label: "Following", icon: "/assets/members.svg" },
-
     // { value: "replies", label: "Replies", icon: "/assets/members.svg" },
     // { value: "tagged", label: "Tagged", icon: "/assets/tag.svg" },
   ];
@@ -55,8 +48,5 @@ export const sidebarLinks = [
     { value: "threads", label: "Threads", icon: "/assets/reply.svg" },
     { value: "members", label: "Members", icon: "/assets/members.svg" },
     { value: "requests", label: "Requests", icon: "/assets/request.svg" },
-    { value: "events", label: "Events", icon:"/assets/event.svg" },
-
   ];
-  
   

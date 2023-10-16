@@ -93,9 +93,8 @@ function ThreadCard({
                     className="cursor-pointer object-contain"
                   />
                 </Link>
-               
+              
               </div>
-              <p className="mt-2 text-small-regular text-light-2">{formatDateString(createdAt)}</p>
 
               <div className="flex flex-row gap-2">
                 {isComment && (
@@ -171,6 +170,11 @@ function ThreadCard({
               </div>
             )}
 
+            {/* {comments.length > 0 && reactions.length > 0 && (
+              <div className="ml-1 mt-3 flex items-center">
+                <p className="mt-1 text-subtle-medium text-gray-1">•</p>
+              </div>
+            )} */}
 
             {reactions.length > 0 && (
               <div className="ml-1 mt-3 flex items-center gap-2">

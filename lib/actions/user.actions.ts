@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 
 import Thread from "../models/thread.model";
 import User from "../models/user.model";
-
+import Event from "../models/event.model";
 import { connectToDB } from "../mongoose";
 
 export async function followUser({
@@ -80,6 +80,8 @@ export async function isUserFollowing(followerId: string, followedId: string) {
     throw new Error(`Failed to check if user is followed: ${error.message}`);
   }
 }
+
+
 
 export async function fetchUser(userId: string) {
   try {
@@ -188,6 +190,7 @@ export async function fetchUsersByField(userId: string, field: string) {
   }
 }
 
+
 export async function fetchUsers({
   userId,
   userIds,
@@ -248,93 +251,6 @@ export async function fetchUsers({
     return { users, isNext };
   } catch (error) {
     console.error("Error fetching users:", error);
-    throw error;
-  }
-}
-
-export async function getActivity(userId: string) {
-  try {
-    connectToDB();
-
-    const [userThreads, user] = await Promise.all([
-      Thread.find({ author: userId }),
-      User.findOne({ _id: userId }),
-    ]);
-
-    const childThreadIds = userThreads.flatMap(
-      (userThread) => userThread.children
-    );
-    const reactions = userThreads.flatMap((userThread) => userThread.reactions);
-
-    const [reactionsUsers, followersUsers] = await Promise.all([
-      User.find({ _id: { $in: reactions.map((reaction) => reaction.user) } }),
-      User.find({
-        _id: {
-          $in: user.followers.map((follower: { user: any }) => follower.user),
-        },
-      }),
-    ]);
-
-    const reactionsData = reactions.map((reaction, index) => {
-      const reactingUser = reactionsUsers.find(
-        (user) => user._id.toString() === reaction.user.toString()
-      );
-
-      if (reactingUser._id.equals(userId)) return null;
-      return {
-        author: {
-          name: reactingUser.name,
-          username: reactingUser.username,
-          image: reactingUser.image,
-          _id: reactingUser._id,
-          id: reactingUser.id,
-        },
-        createdAt: reaction.createdAt,
-        parentId: userThreads[0]._id.toString(),
-        activityType: "reaction",
-      };
-    });
-
-    const followersData = user.followers.map(
-      (follower: { user: { toString: () => any }; createdAt: any }) => {
-        const followingUser = followersUsers.find(
-          (user) => user._id.toString() === follower.user.toString()
-        );
-
-        if (followingUser._id.equals(userId)) return null;
-        return {
-          author: {
-            name: followingUser.name,
-            username: followingUser.username,
-            image: followingUser.image,
-            _id: followingUser._id,
-            id: followingUser.id,
-          },
-          createdAt: follower.createdAt,
-          activityType: "follow",
-        };
-      }
-    );
-
-    const [replies, reactionsAndFollowers] = await Promise.all([
-      Thread.find({
-        _id: { $in: childThreadIds },
-        author: { $ne: userId },
-      }).populate({
-        path: "author",
-        model: User,
-        select: "name username image _id",
-      }),
-      reactionsData.concat(followersData),
-    ]);
-
-    const activity = [...replies, ...reactionsAndFollowers]
-      .filter((i) => i !== null)
-      .sort((a, b) => b?.createdAt - a?.createdAt);
-
-    return activity;
-  } catch (error) {
-    console.error("Error fetching activity: ", error);
     throw error;
   }
 }

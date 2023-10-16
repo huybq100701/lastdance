@@ -167,7 +167,7 @@ export async function deleteThread(id: string, path: string): Promise<void> {
     connectToDB();
 
     // Find the thread to be deleted (the main thread)
-    const mainThread = await Thread.findById(id)
+    const mainThread = await Thread.findById(id);
 
     if (!mainThread) {
       throw new Error("Thread not found");
@@ -182,13 +182,14 @@ export async function deleteThread(id: string, path: string): Promise<void> {
       ...descendantThreads.map((thread) => thread._id),
     ];
 
-  
+   
     const uniqueAuthorIds = new Set(
       [
         ...descendantThreads.map((thread) => thread.author?._id?.toString()), // Use optional chaining to handle possible undefined values
         mainThread.author?._id?.toString(),
       ].filter((id) => id !== undefined)
     );
+
 
     // Recursively delete child threads and their descendants
     await Thread.deleteMany({ _id: { $in: descendantThreadIds } });

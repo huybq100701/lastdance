@@ -37,8 +37,8 @@ interface Props {
 async function ThreadsTab({ currentUserId, accountId, accountType }: Props) {
   let result: Result;
 
-  if (accountType !== "User") {
-    // result = await fetchUserPosts(accountId);
+  if (accountType === "User") {
+    result = await fetchUserPosts(accountId);
   } else {
     result = await fetchUserPosts(accountId);
   }
@@ -62,29 +62,29 @@ async function ThreadsTab({ currentUserId, accountId, accountType }: Props) {
 
   return (
     <section className="mt-9 flex flex-col gap-10">
-    {result.threads.map((thread, idx) => (
-      <ThreadCard
-        key={thread._id}
-        id={thread._id}
-        currentUserId={currentUserId}
-        parentId={thread.parentId}
-        content={thread.text}
-        author={
-          accountType === "User"
-            ? { name: result.name, image: result.image, id: result.id }
-            : {
-                name: thread.author.name,
-                image: thread.author.image,
-                id: thread.author.id,
-              }
-        }
-        createdAt={thread.createdAt}
-        comments={thread.children}
-        reactions={childrenReactions[idx].users}
-        reactState={childrenReactionState[idx]}
-      />
-    ))}
-  </section>
+      {result.threads.map((thread, idx) => (
+        <ThreadCard
+          key={thread._id}
+          id={thread._id}
+          currentUserId={currentUserId}
+          parentId={thread.parentId}
+          content={thread.text}
+          author={
+            accountType === "User"
+              ? { name: result.name, image: result.image, id: result.id }
+              : {
+                  name: thread.author.name,
+                  image: thread.author.image,
+                  id: thread.author.id,
+                }
+          }
+          createdAt={thread.createdAt}
+          comments={thread.children}
+          reactions={childrenReactions[idx].users}
+          reactState={childrenReactionState[idx]}
+        />
+      ))}
+    </section>
   );
 }
 

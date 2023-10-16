@@ -41,6 +41,7 @@ async function page({ params }: { params: { id: string } }) {
           parentId={thread.parentId}
           content={thread.text}
           author={thread.author}
+          community={thread.community}
           createdAt={thread.createdAt}
           comments={thread.children}
           reactions={reactions.users}

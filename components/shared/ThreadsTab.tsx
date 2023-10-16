@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { fetchCommunityPosts } from "@/lib/actions/community.actions";
 import { fetchUser, fetchUserPosts } from "@/lib/actions/user.actions";
 
 import ThreadCard from "../cards/ThreadCard";
@@ -19,6 +20,11 @@ interface Result {
       image: string;
       id: string;
     };
+    community: {
+      id: string;
+      name: string;
+      image: string;
+    } | null;
     createdAt: string;
     children: {
       author: {
@@ -37,8 +43,8 @@ interface Props {
 async function ThreadsTab({ currentUserId, accountId, accountType }: Props) {
   let result: Result;
 
-  if (accountType !== "User") {
-    // result = await fetchUserPosts(accountId);
+  if (accountType === "Community") {
+    result = await fetchCommunityPosts(accountId);
   } else {
     result = await fetchUserPosts(accountId);
   }
@@ -62,29 +68,34 @@ async function ThreadsTab({ currentUserId, accountId, accountType }: Props) {
 
   return (
     <section className="mt-9 flex flex-col gap-10">
-    {result.threads.map((thread, idx) => (
-      <ThreadCard
-        key={thread._id}
-        id={thread._id}
-        currentUserId={currentUserId}
-        parentId={thread.parentId}
-        content={thread.text}
-        author={
-          accountType === "User"
-            ? { name: result.name, image: result.image, id: result.id }
-            : {
-                name: thread.author.name,
-                image: thread.author.image,
-                id: thread.author.id,
-              }
-        }
-        createdAt={thread.createdAt}
-        comments={thread.children}
-        reactions={childrenReactions[idx].users}
-        reactState={childrenReactionState[idx]}
-      />
-    ))}
-  </section>
+      {result.threads.map((thread, idx) => (
+        <ThreadCard
+          key={thread._id}
+          id={thread._id}
+          currentUserId={currentUserId}
+          parentId={thread.parentId}
+          content={thread.text}
+          author={
+            accountType === "User"
+              ? { name: result.name, image: result.image, id: result.id }
+              : {
+                  name: thread.author.name,
+                  image: thread.author.image,
+                  id: thread.author.id,
+                }
+          }
+          community={
+            accountType === "Community"
+              ? { name: result.name, id: result.id, image: result.image }
+              : thread.community
+          }
+          createdAt={thread.createdAt}
+          comments={thread.children}
+          reactions={childrenReactions[idx].users}
+          reactState={childrenReactionState[idx]}
+        />
+      ))}
+    </section>
   );
 }
 

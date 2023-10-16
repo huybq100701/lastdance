@@ -12,16 +12,11 @@
   .head-text {
     @apply text-heading2-bold text-light-1;
   }
-
-  /* Activity */
-  .activity-card {
-    @apply flex items-center gap-2 rounded-md bg-dark-2 px-7 py-4;
-  }
-
   /* No Result */
   .no-result {
     @apply text-center !text-base-regular text-light-3;
   }
+
 
   /* Community Card */
   .community-card {
@@ -31,6 +26,7 @@
   .community-card_btn {
     @apply rounded-lg bg-primary-500 px-5 py-1.5 text-small-regular !text-light-1 !important;
   }
+
 
   /* thread card  */
   .thread-card_bar {

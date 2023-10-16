@@ -99,6 +99,7 @@ function ThreadCard({
                     className="cursor-pointer object-contain"
                   />
                 </Link>
+
                 <Image
                   src="/assets/repost.svg"
                   alt="repost"
@@ -113,6 +114,7 @@ function ThreadCard({
                   height={24}
                   className="cursor-pointer object-contain"
                 />
+
               </div>
 
               <div className="flex flex-row gap-2">

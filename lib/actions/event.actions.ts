@@ -78,4 +78,3 @@ export async function editEvent({
     throw new Error(`Failed to edit event: ${error.message}`);
   }
 }
-

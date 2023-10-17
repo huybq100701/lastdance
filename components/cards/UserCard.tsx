@@ -1,8 +1,6 @@
-"use client";
-
+"use client"
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
 import { Button } from "../ui/button";
 
 interface Props {
@@ -13,8 +11,12 @@ interface Props {
   personType: string;
 }
 
-function UserCard({ id, name, username, imgUrl, personType }: Props) {
+function UserCard({ id, name, username, imgUrl, personType}: Props) {
   const router = useRouter();
+
+  const handleCreateEvent = () => {
+    router.push(`/create-event/${id}`);
+  };
 
   return (
     <article className="user-card">
@@ -41,6 +43,13 @@ function UserCard({ id, name, username, imgUrl, personType }: Props) {
         }
       >
         View
+      </Button>
+
+      <Button
+        className="user-card_btn"
+        onClick={() => handleCreateEvent()}
+      >
+        Create Event
       </Button>
     </article>
   );

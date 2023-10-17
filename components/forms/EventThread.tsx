@@ -1,71 +1,65 @@
 "use client"
+
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/router"; // import useRouter từ next/router
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { EventValidation } from "@/lib/validations/event";
-import Searchbar from "../shared/Searchbar";
 import { createEvent, editEvent } from "@/lib/actions/event.actions";
+import EventValidation from "@/lib/validations/event";
 
-interface Props {
+interface EventThreadProps {
   userId: string;
-  threadId?: string;
-  threadText?: string;
+  eventId?: string;
+  opponentId: string; 
 }
 
-function EventThread({ userId, threadId, threadText }: Props) {
+const EventThread: React.FC<EventThreadProps> = ({ userId, eventId, opponentId }) => {
   const router = useRouter();
-  const pathname = usePathname();
-
   const form = useForm<z.infer<typeof EventValidation>>({
     resolver: zodResolver(EventValidation),
     defaultValues: {
-      title: threadText || "",
-      location: "", 
-      eventTime: "", 
+      title: "",
+      location: "",
+      eventTime: "",
       description: "",
-      opponentId: "", 
-      currentUserId: userId,
+      // opponentId: opponentId, 
+      // currentUserId: userId,
     },
   });
 
   const onSubmit = async (values: z.infer<typeof EventValidation>) => {
-    
-    // if (threadId && threadText) {
-    //   await editEvent({
-    //     eventId: threadId,
+    if (eventId) {
+      // await editEvent({
+      //   eventId: eventId,
+      //   title: values.title,
+      //   location: values.location,
+      //   eventTime: values.eventTime,
+      //   description: values.description,
+      //   path: router.asPath, // sử dụng router.asPath thay vì pathname
+      // });
+    // } else {
+    //   await createEvent({
     //     title: values.title,
     //     location: values.location,
+    //     currentUserId: userId,
+    //     opponentId: opponentId, 
     //     eventTime: values.eventTime,
     //     description: values.description,
-    //     path: pathname,
+    //     path: router.asPath, 
     //   });
-    // } else {
-      try{
-        await createEvent({
-          title: values.title,
-          location: values.location,
-          currentUserId: userId,
-          opponentId: values.opponentId,
-          eventTime: values.eventTime,
-          description: values.description,
-          path: pathname,
-        });     
+    }
 
     router.push("/");
-      }catch (error){
-        console.error("Error creating event:" , error)
-      }
   };
 
   return (
     <Form {...form}>
       <form
         className="mt-10 flex flex-col justify-start gap-10"
-        // onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onSubmit)}
       >
         <FormField
           control={form.control}
@@ -82,19 +76,6 @@ function EventThread({ userId, threadId, threadText }: Props) {
             </FormItem>
           )}
         />
-          <FormField
-            control={form.control}
-            name="opponentId"
-            render={({ field }) => (
-              <FormItem className="flex w-full flex-col gap-3">
-                <FormLabel className="text-base-semibold text-light-2">
-                  Opponent
-                </FormLabel>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        <Searchbar routeType='create-event' />
         <FormField
           control={form.control}
           name="location"
@@ -140,11 +121,9 @@ function EventThread({ userId, threadId, threadText }: Props) {
             </FormItem>
           )}
         />
-         
 
-     
-        <Button type="submit" className="bg-lime-500">
-          {threadId ? "Edit" : "Create"} Event Thread
+        <Button type="submit" className="bg-primary-500">
+          {eventId ? "Edit" : "Create"} Event Thread
         </Button>
       </form>
     </Form>

@@ -3,12 +3,12 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/router"; // import useRouter từ next/router
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { createEvent, editEvent } from "@/lib/actions/event.actions";
 import EventValidation from "@/lib/validations/event";
+import { usePathname, useRouter } from "next/navigation";
 
 interface EventThreadProps {
   userId: string;
@@ -18,6 +18,8 @@ interface EventThreadProps {
 
 const EventThread: React.FC<EventThreadProps> = ({ userId, eventId, opponentId }) => {
   const router = useRouter();
+  const pathname = usePathname();
+
   const form = useForm<z.infer<typeof EventValidation>>({
     resolver: zodResolver(EventValidation),
     defaultValues: {

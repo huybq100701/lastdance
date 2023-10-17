@@ -9,16 +9,36 @@ import { Textarea } from "@/components/ui/textarea";
 import { createEvent, editEvent } from "@/lib/actions/event.actions";
 import EventValidation from "@/lib/validations/event";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { fetchUser } from "@/lib/actions/user.actions";
 
 interface EventThreadProps {
   userId: string;
   eventId?: string;
-  opponentId: string; 
+  opponentId: string;
+  opponentInfo: {
+    name: string;
+  };
 }
 
-const EventThread: React.FC<EventThreadProps> = ({ userId, eventId, opponentId }) => {
+const EventThread: React.FC<EventThreadProps> = ({ userId, eventId, opponentId, opponentInfo}) => {
   const router = useRouter();
   const pathname = usePathname();
+  const [userInfo, setUserInfo] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userData = await fetchUser(opponentId); 
+        setUserInfo(userData);
+        console.log("information :" , opponentId)
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
 
   const form = useForm<z.infer<typeof EventValidation>>({
     resolver: zodResolver(EventValidation),
@@ -27,8 +47,6 @@ const EventThread: React.FC<EventThreadProps> = ({ userId, eventId, opponentId }
       location: "",
       eventTime: "",
       description: "",
-      // opponentId: opponentId, 
-      // currentUserId: userId,
     },
   });
 
@@ -58,7 +76,13 @@ const EventThread: React.FC<EventThreadProps> = ({ userId, eventId, opponentId }
   };
 
   return (
+    
     <Form {...form}>
+       <div>
+       <FormLabel className="text-base-semibold text-light-2">
+          Opponent Information : {opponentInfo}
+        </FormLabel>
+        </div>
       <form
         className="mt-10 flex flex-col justify-start gap-10"
         onSubmit={form.handleSubmit(onSubmit)}

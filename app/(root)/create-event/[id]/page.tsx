@@ -15,6 +15,7 @@ import {
 } from "@/lib/actions/user.actions";
 import UserCard from "@/components/cards/UserCard";
 import EventThread from "@/components/forms/EventThread";
+import Event from "@/lib/models/event.model";
 
 async function Page({ params }: { params: { id: string } }) {
   const user = await currentUser();
@@ -26,7 +27,7 @@ async function Page({ params }: { params: { id: string } }) {
 
   return (
     <section>
-      <EventThread opponentId={userInfo.id} opponentInfo ={userInfo.name} />
+      <EventThread currentUserId={user.id} currentUserInfo={user.username} opponentId={userInfo.id} opponentInfo ={userInfo.username} />
     </section>
   );
 }

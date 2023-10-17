@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import Community from "../models/community.model";
 import Thread from "../models/thread.model";
 import User from "../models/user.model";
-
+import Event from "../models/event.model";
 import { connectToDB } from "../mongoose";
 
 export async function followUser({
@@ -348,3 +348,22 @@ export async function getActivity(userId: string) {
     throw error;
   }
 }
+
+// export async function fetchUserEvents(userId: string) {
+//   try {
+//     connectToDB();
+
+//     // Tìm tất cả các sự kiện được tạo bởi người dùng có userId cụ thể
+//     const user = await User.findOne({ id: userId });
+//     if (!user) {
+//       throw new Error("User not found");
+//     }
+
+//     const events = await Event.find({ currentUserId: user._id });
+
+//     return events;
+//   } catch (error) {
+//     console.error("Error fetching user events:", error);
+//     throw error;
+//   }
+// }

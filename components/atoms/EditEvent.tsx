@@ -3,25 +3,27 @@ import Link from "next/link";
 import React from "react";
 
 interface Props {
-  threadId: string;
+  eventId: string;
   currentUserId: string;
   authorId: string;
 }
 
-const EditThread = ({ threadId, currentUserId, authorId }: Props) => {
+const EditEvent = ({ eventId, currentUserId, authorId }: Props) => {
   if (currentUserId !== authorId) return null;
 
   return (
-    <Link href={`/edit-thread/${JSON.parse(threadId)}`}>
-      <Image
-        src="/assets/edit.svg"
-        alt="edit event"
-        width={18}
-        height={18}
-        className="cursor-pointer object-contain"
-      />
+    <Link href={`/edit-thread/${JSON.parse(eventId)}`}>
+      <div className="cursor-pointer">
+        <Image
+          src="/assets/edit.svg"
+          alt="edit event"
+          width={18}
+          height={18}
+          className="object-contain"
+        />
+      </div>
     </Link>
   );
 };
 
-export default EditThread;
+export default EditEvent;

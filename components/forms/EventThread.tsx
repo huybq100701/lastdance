@@ -13,15 +13,14 @@ import { useEffect, useState } from "react";
 import { fetchUser } from "@/lib/actions/user.actions";
 
 interface EventThreadProps {
-  userId: string;
+  currentUserId: string;
   eventId?: string;
   opponentId: string;
-  opponentInfo: {
-    name: string;
-  };
+  currentUserInfo:string;
+  opponentInfo: string;
 }
 
-const EventThread: React.FC<EventThreadProps> = ({ userId, eventId, opponentId, opponentInfo}) => {
+const EventThread: React.FC<EventThreadProps> = ({ currentUserId, currentUserInfo, eventId, opponentId, opponentInfo}) => {
   const router = useRouter();
   const pathname = usePathname();
   const [userInfo, setUserInfo] = useState(null);
@@ -31,14 +30,13 @@ const EventThread: React.FC<EventThreadProps> = ({ userId, eventId, opponentId, 
       try {
         const userData = await fetchUser(opponentId); 
         setUserInfo(userData);
-        console.log("information :" , opponentId)
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
 
     fetchData();
-  }, [userId]);
+  }, [currentUserId]);
 
   const form = useForm<z.infer<typeof EventValidation>>({
     resolver: zodResolver(EventValidation),
@@ -51,38 +49,41 @@ const EventThread: React.FC<EventThreadProps> = ({ userId, eventId, opponentId, 
   });
 
   const onSubmit = async (values: z.infer<typeof EventValidation>) => {
-    if (eventId) {
-      // await editEvent({
-      //   eventId: eventId,
-      //   title: values.title,
-      //   location: values.location,
-      //   eventTime: values.eventTime,
-      //   description: values.description,
-      //   path: router.asPath, // sử dụng router.asPath thay vì pathname
-      // });
-    // } else {
-    //   await createEvent({
-    //     title: values.title,
-    //     location: values.location,
-    //     currentUserId: userId,
-    //     opponentId: opponentId, 
-    //     eventTime: values.eventTime,
-    //     description: values.description,
-    //     path: router.asPath, 
-    //   });
+    try {
+      if (eventId) {
+        await editEvent({
+          eventId: eventId,
+          title: values.title,
+          location: values.location,
+          eventTime: new Date(values.eventTime),
+          description: values.description,
+          path: pathname,
+        });
+      } else {
+        await createEvent({
+          title: values.title,
+          location: values.location,
+          currentUserId: currentUserId,
+          currentUserInfo: currentUserInfo.username, 
+          opponentId: opponentId,
+          opponentInfo: opponentInfo, 
+          eventTime: new Date(values.eventTime),
+          description: values.description,
+          path: pathname,
+        });
+      }
+  
+      router.push("/");
+    } catch (error) {
+      console.error("Error occurred during form submission:", error);
     }
-
-    router.push("/");
   };
+  
 
   return (
     
     <Form {...form}>
-       <div>
-       <FormLabel className="text-base-semibold text-light-2">
-          Opponent Information : {opponentInfo}
-        </FormLabel>
-        </div>
+      <div className="text-base-semibold text-light-2">Create Event</div>
       <form
         className="mt-10 flex flex-col justify-start gap-10"
         onSubmit={form.handleSubmit(onSubmit)}

@@ -1,50 +1,49 @@
 "use client"
 
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { createEvent, editEvent } from "@/lib/actions/event.actions";
-import EventValidation from "@/lib/validations/event";
+import * as z from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { createEvent, editEvent } from '@/lib/actions/event.actions';
+import EventValidation from '@/lib/validations/event';
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { fetchUser } from "@/lib/actions/user.actions";
+import { useEffect, useState } from 'react';
+import { fetchUser } from '@/lib/actions/user.actions';
 
 interface EventThreadProps {
-  currentUserId: string;
-  eventId?: string;
   opponentId: string;
-  currentUserInfo:string;
-  opponentInfo: string;
+  eventId?: string;
+  authorId: string;
 }
 
-const EventThread: React.FC<EventThreadProps> = ({ currentUserId, currentUserInfo, eventId, opponentId, opponentInfo}) => {
+const EventThread: React.FC<EventThreadProps> = ({ opponentId, eventId, authorId }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const [userInfo, setUserInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState<any>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchUserData = async () => {
       try {
-        const userData = await fetchUser(opponentId); 
-        setUserInfo(userData);
+        const opponentData = await fetchUser(opponentId);
+        const authorData = await fetchUser(authorId);
+        setUserInfo({ opponent: opponentData, author: authorData });
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error('Error fetching user data:', error);
       }
     };
 
-    fetchData();
-  }, [currentUserId]);
+    fetchUserData();
+  }, [opponentId, authorId]);
 
   const form = useForm<z.infer<typeof EventValidation>>({
     resolver: zodResolver(EventValidation),
     defaultValues: {
-      title: "",
-      location: "",
-      eventTime: "",
-      description: "",
+      title: '',
+      location: '',
+      eventTime: '',
+      description: '',
     },
   });
 
@@ -63,19 +62,18 @@ const EventThread: React.FC<EventThreadProps> = ({ currentUserId, currentUserInf
         await createEvent({
           title: values.title,
           location: values.location,
-          currentUserId: currentUserId,
-          currentUserInfo: currentUserInfo.username, 
+          currentUserId: authorId,
           opponentId: opponentId,
-          opponentInfo: opponentInfo, 
           eventTime: new Date(values.eventTime),
           description: values.description,
           path: pathname,
         });
       }
   
-      router.push("/");
+      router.push('/');
+  
     } catch (error) {
-      console.error("Error occurred during form submission:", error);
+      console.error('Error occurred during form submission:', error);
     }
   };
   
@@ -84,6 +82,8 @@ const EventThread: React.FC<EventThreadProps> = ({ currentUserId, currentUserInf
     
     <Form {...form}>
       <div className="text-base-semibold text-light-2">Create Event</div>
+      <div className="text-base-semibold text-light-2">Opponent: {opponentId}</div>
+      <div className="text-base-semibold text-light-2">Author: {authorId} </div>
       <form
         className="mt-10 flex flex-col justify-start gap-10"
         onSubmit={form.handleSubmit(onSubmit)}

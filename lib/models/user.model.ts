@@ -57,12 +57,6 @@ const userSchema = new mongoose.Schema({
       ref: "Community",
     },
   ],
-  events: [
-    {
-      type:mongoose.Schema.Types.ObjectId,
-      ref: "Event"
-    }
-  ]
 });
 
 userSchema.virtual("threadsCount").get(function () {

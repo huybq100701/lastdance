@@ -27,12 +27,10 @@ export async function editEvent({
       throw new Error("Event not found");
     }
 
-    event.set({
-      title,
-      location,
-      eventTime,
-      description,
-    });
+    event.title = title;
+    event.location = location;
+    event.eventTime = eventTime;
+    event.description = description;
 
     await event.save();
 
@@ -65,8 +63,8 @@ export async function createEvent({
     const createdEvent = await Event.create({
       title,
       location,
-      currentUserId,
-      opponentId,
+      author: currentUserId,
+      opponent: opponentId,
       eventTime,
       description,
     });

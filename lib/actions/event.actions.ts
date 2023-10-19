@@ -19,7 +19,7 @@ export async function editEvent({
   path: string;
 }) {
   try {
-    connectToDB();
+    // await connecttoDB();
 
     const event = await Event.findById(eventId);
 
@@ -58,20 +58,58 @@ export async function createEvent({
   path: string;
 }) {
   try {
-    connectToDB();
+   // await connecttoDB();
 
-    const createdEvent = await Event.create({
+    // if(Event){
+
+    const newEvent = new Event();
+
+    console.log({
       title,
       location,
-      author: currentUserId,
-      opponent: opponentId,
+      currentUserId,
+      opponentId,
       eventTime,
       description,
+      path,
     });
 
-    await User.findByIdAndUpdate(currentUserId, {
-      $push: { events: createdEvent._id },
-    });
+    newEvent.title = title;
+    newEvent.location = location;
+    newEvent.author = currentUserId;
+    newEvent.opponent = opponentId;
+    newEvent.eventTime = eventTime;
+    newEvent.description = description;
+
+    const createdEvent =  await newEvent.save();
+      // const createdEvent = await Event.create({
+      //   title,
+      //   location,
+      //   author: currentUserId,
+      //   opponent: opponentId,
+      //   eventTime,
+      //   description,
+      // });
+
+    console.log(createdEvent)
+  
+      await User.findByIdAndUpdate(currentUserId, {
+        $push: { events: createdEvent._id },
+      });
+    // }
+
+    // const createdEvent = await Event.create({
+    //   title,
+    //   location,
+    //   author: currentUserId,
+    //   opponent: opponentId,
+    //   eventTime,
+    //   description,
+    // });
+
+    // await User.findByIdAndUpdate(currentUserId, {
+    //   $push: { events: createdEvent._id },
+    // });
 
     revalidatePath(path);
   } catch (error: any) {

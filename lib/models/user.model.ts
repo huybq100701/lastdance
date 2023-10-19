@@ -57,12 +57,6 @@ const userSchema = new mongoose.Schema({
       ref: "Community",
     },
   ],
-  events: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Events",
-    }
-  ]
 });
 
 userSchema.virtual("threadsCount").get(function () {
@@ -85,6 +79,6 @@ userSchema.virtual("reactionsCount").get(function () {
   return this.reactions.length;
 });
 
-const User =  mongoose.models?.User || mongoose.model("User", userSchema);
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export default User;

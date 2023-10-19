@@ -19,7 +19,7 @@ export async function followUser({
   path: string;
 }) {
   try {
-    // await connecttoDB();
+    connectToDB();
 
     const follower = await User.findOne({ id: followerId });
 
@@ -67,7 +67,7 @@ export async function followUser({
 
 export async function isUserFollowing(followerId: string, followedId: string) {
   try {
-    // await connecttoDB();
+    connectToDB();
 
     const followed = await User.findOne({ id: followedId });
 
@@ -84,7 +84,7 @@ export async function isUserFollowing(followerId: string, followedId: string) {
 
 export async function fetchUser(userId: string) {
   try {
-    // await connecttoDB();
+    connectToDB();
 
     return await User.findOne({ id: userId }).populate({
       path: "communities",
@@ -113,7 +113,7 @@ export async function updateUser({
   image,
 }: Params): Promise<void> {
   try {
-    // await connecttoDB();
+    connectToDB();
 
     await User.findOneAndUpdate(
       { id: userId },
@@ -137,7 +137,7 @@ export async function updateUser({
 
 export async function fetchUserPosts(userId: string) {
   try {
-    // await connecttoDB();
+    connectToDB();
 
     // Find all threads authored by the user with the given userId
     const threads = await User.findOne({ id: userId }).populate({
@@ -169,7 +169,7 @@ export async function fetchUserPosts(userId: string) {
 
 export async function getUserFollowersIds(userId: string, key: string) {
   try {
-    // await connecttoDB();
+    connectToDB();
 
     const user = await User.findOne({ id: userId });
 
@@ -183,7 +183,7 @@ export async function getUserFollowersIds(userId: string, key: string) {
 
 export async function fetchUsersByField(userId: string, field: string) {
   try {
-    // await connecttoDB();
+    connectToDB();
 
     const user = await User.findOne({ id: userId });
 
@@ -214,7 +214,7 @@ export async function fetchUsers({
   sortBy?: SortOrder;
 }) {
   try {
-    // await connecttoDB();
+    connectToDB();
 
     // Calculate the number of users to skip based on the page number and page size.
     const skipAmount = (pageNumber - 1) * pageSize;
@@ -264,7 +264,7 @@ export async function fetchUsers({
 
 export async function getActivity(userId: string) {
   try {
-    // await connecttoDB();
+    connectToDB();
 
     const [userThreads, user] = await Promise.all([
       Thread.find({ author: userId }),
@@ -351,7 +351,7 @@ export async function getActivity(userId: string) {
 
 // export async function fetchUserEvents(userId: string) {
 //   try {
-    // // await connecttoDB();
+//     connectToDB();
 
 //     // Tìm tất cả các sự kiện được tạo bởi người dùng có userId cụ thể
 //     const user = await User.findOne({ id: userId });

@@ -48,32 +48,32 @@ const EventThread: React.FC<EventThreadProps> = ({ opponentId, eventId, authorId
   });
 
   const onSubmit = async (values: z.infer<typeof EventValidation>) => {
-    try {
+    // try {
       if (eventId) {
-        await editEvent({
-          eventId: eventId,
-          title: values.title,
-          location: values.location,
-          eventTime: new Date(values.eventTime),
-          description: values.description,
-          path: pathname,
-        });
-      } else {
-        await createEvent({
-          title: values.title,
-          location: values.location,
-          currentUserId: authorId,
-          opponentId: opponentId,
-          eventTime: new Date(values.eventTime),
-          description: values.description,
-          path: pathname,
-        });
-      }
+      //   await editEvent({
+      //     eventId: eventId,
+      //     title: values.title,
+      //     location: values.location,
+      //     eventTime: new Date(values.eventTime),
+      //     description: values.description,
+      //     path: pathname,
+      //   });
+      // } else {
+      //   await createEvent({
+      //     title: values.title,
+      //     location: values.location,
+      //     currentUserId: authorId,
+      //     opponentId: opponentId,
+      //     eventTime: new Date(values.eventTime),
+      //     description: values.description,
+      //     path: pathname,
+      //   });
+      // }
   
       router.push('/');
   
-    } catch (error) {
-      console.error('Error occurred during form submission:', error);
+    // } catch (error) {
+    //   console.error('Error occurred during form submission:', error);
     }
   };
   
@@ -149,7 +149,7 @@ const EventThread: React.FC<EventThreadProps> = ({ opponentId, eventId, authorId
           )}
         />
 
-        <Button type="submit" className="bg-primary-500">
+        <Button type="submit" className="bg-lime-500">
           {eventId ? "Edit" : "Create"} Event Thread
         </Button>
       </form>

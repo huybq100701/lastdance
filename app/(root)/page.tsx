@@ -1,5 +1,3 @@
-"use client"
-import { useEffect } from "react";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
@@ -8,16 +6,12 @@ import Pagination from "@/components/shared/Pagination";
 
 import { fetchPosts, getReactionsData } from "@/lib/actions/thread.actions";
 import { fetchUser } from "@/lib/actions/user.actions";
-import { connectDB } from "@/lib/actions/connectdb.action";
 
 async function Home({
   searchParams,
 }: {
   searchParams: { [key: string]: string | undefined };
 }) {
-useEffect(() => {
-  connectDB()
-},[])
   const user = await currentUser();
   if (!user) return null;
 

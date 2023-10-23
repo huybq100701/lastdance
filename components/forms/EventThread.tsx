@@ -32,19 +32,19 @@ function EventThread({ authorId, opponentId, eventId, eventTitle, eventLocation,
       description: eventDescription || '',
     },
   });
-
+  console.log(eventTitle)
   const onSubmit = async (values: z.infer<typeof EventValidation>) => {
-    try {
+    // try {
       if (eventId) {
-        await editEvent({
-          eventId: eventId,
-          title: values.title,
-          location: values.location,
-          eventTime: new Date(values.eventTime),
-          description: values.description,
-          path: pathname,
-        });
-      } else {
+      //   await editEvent({
+      //     eventId: eventId,
+      //     title: values.title,
+      //     location: values.location,
+      //     eventTime: new Date(values.eventTime),
+      //     description: values.description,
+      //     path: pathname,
+      //   });
+      // } else {
         await createEvent({
           title: values.title,
           location: values.location,
@@ -54,12 +54,12 @@ function EventThread({ authorId, opponentId, eventId, eventTitle, eventLocation,
           description: values.description,
           path: pathname,
         });
-      }
+      // }
 
       router.push('/');
 
-    } catch (error) {
-      console.error('Error occurred during form submission:', error);
+    // } catch (error) {
+    //   console.error('Error occurred during form submission:', error);
     }
   };
 

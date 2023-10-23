@@ -19,7 +19,7 @@ export async function editEvent({
   path: string;
 }) {
   try {
-    connectToDB();
+    // connectToDB();
 
     const event = await Event.findById(eventId);
 
@@ -58,7 +58,7 @@ export async function createEvent({
   path: string;
 }) {
   try {
-    connectToDB();
+    // connectToDB();
 
     const createdEvent = await Event.create({
       title,

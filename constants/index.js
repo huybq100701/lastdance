@@ -21,7 +21,7 @@ export const sidebarLinks = [{
   {
     imgURL: "/assets/create.svg",
     route: "/create-thread",
-    label: "Create Thread",
+    label: "Create Post",
   },
   // {
   //   imgURL: "/assets/community.svg",
@@ -37,7 +37,7 @@ export const sidebarLinks = [{
 
 export const profileTabs = [{
     value: "threads",
-    label: "Threads",
+    label: "Posts",
     icon: "/assets/reply.svg"
   },
   {

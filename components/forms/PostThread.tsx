@@ -82,7 +82,7 @@ function PostThread({ userId, threadId, threadText }: Props) {
         />
 
         <Button type="submit" className="bg-lime-500">
-          {threadId ? "Edit" : "Create"} Thread
+          {threadId ? "Edit" : "Create"} Post
         </Button>
       </form>
     </Form>

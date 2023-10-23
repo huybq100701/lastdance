@@ -150,7 +150,7 @@ const EventThread: React.FC<EventThreadProps> = ({ opponentId, eventId, authorId
         />
 
         <Button type="submit" className="bg-lime-500">
-          {eventId ? "Edit" : "Create"} Event Thread
+          {eventId ? "Edit" : "Create"} Event 
         </Button>
       </form>
     </Form>

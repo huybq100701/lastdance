@@ -1,4 +1,4 @@
-import connectToDB from "../mongoose";
+import {connectToDB} from "../mongoose";
 
 export const connectDB = async () => {
 await connectToDB()

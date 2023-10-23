@@ -8,6 +8,7 @@ import "../globals.css";
 import LeftSidebar from "@/components/shared/LeftSidebar";
 import Bottombar from "@/components/shared/Bottombar";
 import Topbar from "@/components/shared/Topbar";
+import { connectToDB } from "@/lib/mongoose";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
   title: "Last Dance",
   description: "Last Dance",
 };
+connectToDB();
 
 export default function RootLayout({
   children,
@@ -45,3 +47,4 @@ export default function RootLayout({
     </ClerkProvider>
   );
 }
+

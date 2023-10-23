@@ -1,3 +1,4 @@
+
 import Event from "../models/event.model";
 import User from "../models/user.model";
 import { revalidatePath } from "next/cache";

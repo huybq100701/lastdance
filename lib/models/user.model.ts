@@ -57,6 +57,12 @@ const userSchema = new mongoose.Schema({
       ref: "Community",
     },
   ],
+  events: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Event",
+    },
+  ],
 });
 
 userSchema.virtual("threadsCount").get(function () {
@@ -77,6 +83,10 @@ userSchema.virtual("communitiesCount").get(function () {
 
 userSchema.virtual("reactionsCount").get(function () {
   return this.reactions.length;
+});
+
+userSchema.virtual("eventsCount").get(function () {
+  return this.events.length;
 });
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);

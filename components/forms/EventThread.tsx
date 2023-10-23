@@ -1,88 +1,71 @@
 "use client"
-
-import * as z from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { createEvent, editEvent } from '@/lib/actions/event.actions';
-import EventValidation from '@/lib/validations/event';
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from 'react';
-import { fetchUser } from '@/lib/actions/user.actions';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { createEvent, editEvent } from "@/lib/actions/event.actions";
+import EventValidation from "@/lib/validations/event";
 
 interface EventThreadProps {
+  authorId: string;
   opponentId: string;
   eventId?: string;
-  authorId: string;
+  eventTitle?: string;
+  eventLocation?: string;
+  eventTime?: string;
+  eventDescription?: string;
 }
 
-const EventThread: React.FC<EventThreadProps> = ({ opponentId, eventId, authorId }) => {
+function EventThread({ authorId, opponentId, eventId, eventTitle, eventLocation, eventTime, eventDescription }: EventThreadProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [userInfo, setUserInfo] = useState<any>(null);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const opponentData = await fetchUser(opponentId);
-        const authorData = await fetchUser(authorId);
-        setUserInfo({ opponent: opponentData, author: authorData });
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
-
-    fetchUserData();
-  }, [opponentId, authorId]);
 
   const form = useForm<z.infer<typeof EventValidation>>({
     resolver: zodResolver(EventValidation),
     defaultValues: {
-      title: '',
-      location: '',
-      eventTime: '',
-      description: '',
+      title: eventTitle || '',
+      location: eventLocation || '',
+      eventTime: eventTime || '',
+      description: eventDescription || '',
     },
   });
 
   const onSubmit = async (values: z.infer<typeof EventValidation>) => {
-    // try {
+    try {
       if (eventId) {
-      //   await editEvent({
-      //     eventId: eventId,
-      //     title: values.title,
-      //     location: values.location,
-      //     eventTime: new Date(values.eventTime),
-      //     description: values.description,
-      //     path: pathname,
-      //   });
-      // } else {
-      //   await createEvent({
-      //     title: values.title,
-      //     location: values.location,
-      //     currentUserId: authorId,
-      //     opponentId: opponentId,
-      //     eventTime: new Date(values.eventTime),
-      //     description: values.description,
-      //     path: pathname,
-      //   });
-      // }
-  
+        await editEvent({
+          eventId: eventId,
+          title: values.title,
+          location: values.location,
+          eventTime: new Date(values.eventTime),
+          description: values.description,
+          path: pathname,
+        });
+      } else {
+        await createEvent({
+          title: values.title,
+          location: values.location,
+          currentUserId: authorId,
+          opponentId: opponentId,
+          eventTime: new Date(values.eventTime),
+          description: values.description,
+          path: pathname,
+        });
+      }
+
       router.push('/');
-  
-    // } catch (error) {
-    //   console.error('Error occurred during form submission:', error);
+
+    } catch (error) {
+      console.error('Error occurred during form submission:', error);
     }
   };
-  
 
   return (
-    
     <Form {...form}>
-      <div className="text-base-semibold text-light-2">Create Event</div>
-      <div className="text-base-semibold text-light-2">Opponent: {opponentId}</div>
+        <div className="text-base-semibold text-light-2">Opponent: {opponentId}</div>
       <div className="text-base-semibold text-light-2">Author: {authorId} </div>
       <form
         className="mt-10 flex flex-col justify-start gap-10"
@@ -150,7 +133,7 @@ const EventThread: React.FC<EventThreadProps> = ({ opponentId, eventId, authorId
         />
 
         <Button type="submit" className="bg-lime-500">
-          {eventId ? "Edit" : "Create"} Event 
+          {eventId ? "Edit" : "Create"} Event
         </Button>
       </form>
     </Form>

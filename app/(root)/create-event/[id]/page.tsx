@@ -19,7 +19,8 @@ async function Page({ params }: { params: { id: string } }) {
 
   return (
     <section>
-     <EventThread opponentId={userInfo._id} authorId={user.id} />
+     <h1 className='head-text'>Create Post</h1>
+     <EventThread opponentId={userInfo.id} authorId={user.id} />
     </section>
   );
 }

@@ -31,21 +31,18 @@ interface Props {
 async function EventTab({ currentUserId, accountId, accountType }: Props) {
   let events: EventData[];
 
-  // Thay thế "fetchUserEvents" bằng hàm tải dữ liệu sự kiện thích hợp từ user.actions
   events = await fetchUserEvents(accountId);
 
   if (!events) {
     redirect("/");
   }
 
-  // Thêm phần mã để lấy thông tin user và kiểm tra onboarded tại đây (tương tự như trong ThreadsTab)
-
   return (
     <section className="mt-9 flex flex-col gap-10">
       {events.map((event) => (
         <EventCard
           key={event._id}
-          id={event._id}
+          eventId={event._id}
           currentUserId={currentUserId}
           title={event.title}
           location={event.location}

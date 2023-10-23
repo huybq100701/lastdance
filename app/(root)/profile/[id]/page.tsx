@@ -15,6 +15,7 @@ import {
   isUserFollowing,
 } from "@/lib/actions/user.actions";
 import UserCard from "@/components/cards/UserCard";
+import EventCard from "@/components/cards/EventCard";
 
 async function Page({ params }: { params: { id: string } }) {
   const user = await currentUser();
@@ -28,6 +29,7 @@ async function Page({ params }: { params: { id: string } }) {
 
   const isFollowing = await isUserFollowing(user.id, params.id);
   const userEvents = await fetchUserEvents(params.id);
+  const events = userEvents; 
   return (
     <section>
       <ProfileHeader
@@ -66,6 +68,11 @@ async function Page({ params }: { params: { id: string } }) {
                 {tab.label === "Following" && (
                   <p className="ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2">
                     {userInfo.followingCount}
+                  </p>
+                )}
+                 {tab.label === "Events" && (
+                  <p className="ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2">
+                    {userInfo.eventsCount}
                   </p>
                 )}
               </TabsTrigger>
@@ -122,6 +129,31 @@ async function Page({ params }: { params: { id: string } }) {
                       username={following.username}
                       imgUrl={following.image}
                       personType="User"
+                    />
+                  ))}
+                </>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="following" className="w-full text-light-1">
+            <div className="mt-9 flex flex-col gap-10">
+              {userInfo.eventsCount === 0 ? (
+                <p className="no-result">No events found</p>
+              ) : (
+                <>
+                  {events.map((event: any) => (
+                    <EventCard
+                      key={event.eventId} 
+                      eventId={event.eventId}
+                      currentUserId={event.currentUserId}
+                      title={event.title}
+                      location={event.location}
+                      eventTime={event.eventTime}
+                      description={event.description}
+                      author={event.author}
+                      community={event.community}
+                      createdAt={event.createdAt}
                     />
                   ))}
                 </>

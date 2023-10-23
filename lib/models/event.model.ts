@@ -1,5 +1,4 @@
-import mongoose  from "mongoose";
-
+import mongoose from "mongoose";
 
 const eventSchema = new mongoose.Schema({
   title: {
@@ -18,12 +17,12 @@ const eventSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  author: {
+  authorId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
   },
-  opponent:{
+  opponentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
@@ -33,7 +32,6 @@ const eventSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
-
 
 const Event = mongoose.models.Event || mongoose.model("Event", eventSchema);
 

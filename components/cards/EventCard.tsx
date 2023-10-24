@@ -1,84 +1,35 @@
-import Image from "next/image";
-import Link from "next/link";
-import { formatDateString } from "@/lib/utils";
+// import { fetchUserEvents } from '@/lib/actions/user.actions';
+// import React, { useEffect, useState } from 'react';
 
-interface Props {
-  eventId: string;
-  currentUserId: string;
-  title: string;
-  location: string;
-  eventTime: string;
-  description: string;
-  author: {
-    name: string;
-    image: string;
-    id: string;
-  };
-  community: {
-    id: string;
-    name: string;
-    image: string;
-  } | null;
-  createdAt: string;
-}
+// function EventCard() {
+//   const [userEvents, setUserEvents] = useState([]);
 
-function EventCard({
-  eventId,
-  currentUserId,
-  title,
-  location,
-  eventTime,
-  description,
-  author,
-  community,
-  createdAt,
-}: Props) {
-  return (
-    <article className="flex w-full flex-col rounded-xl bg-dark-2 p-7">
-      <div className="flex items-start justify-between">
-        <div className="flex w-full flex-1 flex-row gap-4">
-          <div className="flex flex-col items-center">
-            <Link href={`/profile/${author.id}`} className="relative h-11 w-11">
-              <Image
-                src={author.image}
-                alt="Profile image"
-                fill
-                className="cursor-pointer rounded-full"
-              />
-            </Link>
-            <div className="thread-card_bar" />
-          </div>
-          <div className="flex w-full flex-col">
-            <h4 className="cursor-pointer text-base-semibold text-light-1">
-              {author.name}
-            </h4>
-            <p className="mt-2 text-small-regular text-light-2">{title}</p>
-            <p className="mt-2 text-small-regular text-light-2">{location}</p>
-            <p className="mt-2 text-small-regular text-light-2">{eventTime}</p>
-            <p className="mt-2 text-small-regular text-light-2">{description}</p>
-          </div>
-        </div>
-      </div>
-      {community && (
-        <Link
-          href={`/communities/${community.id}`}
-          className="mt-5 flex items-center"
-        >
-          <p className="text-subtle-medium text-gray-1">
-            {formatDateString(createdAt)}
-            {community && ` - ${community.name} Community`}
-          </p>
-          <Image
-            src={community.image}
-            alt={community.name}
-            width={14}
-            height={14}
-            className="ml-1 rounded-full object-cover"
-          />
-        </Link>
-      )}
-    </article>
-  );
-}
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const events = await fetchUserEvents(); // Gọi hàm fetchUserEvents để lấy dữ liệu từ server
+//         setUserEvents(events); // Cập nhật state với dữ liệu lấy được
+//       } catch (error) {
+//         console.error('Error fetching user events:', error);
+//       }
+//     };
 
-export default EventCard;
+//     fetchData();
+//   }, []);
+
+//   return (
+//     <div>
+//       {userEvents.map((event) => (
+//         <div key={event.eventId}>
+//           <div>Title: {event.title}</div>
+//           <div>Location: {event.location}</div>
+//           <div>Event Time: {event.eventTime}</div>
+//           <div>Description: {event.description}</div>
+//           {/* Hiển thị các thông tin khác liên quan đến sự kiện ở đây */}
+//         </div>
+//       ))}
+//     </div>
+//   );
+// }
+
+// export default EventCard;

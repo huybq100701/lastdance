@@ -136,7 +136,7 @@ async function Page({ params }: { params: { id: string } }) {
             </div>
           </TabsContent>
 
-          <TabsContent value="following" className="w-full text-light-1">
+          <TabsContent value="events" className="w-full text-light-1">
             <div className="mt-9 flex flex-col gap-10">
               {userInfo.eventsCount === 0 ? (
                 <p className="no-result">No events found</p>

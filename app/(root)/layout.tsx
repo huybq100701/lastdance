@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "Last Dance",
   description: "Last Dance",
 };
-connectToDB();
+// connectToDB();
 
 export default function RootLayout({
   children,

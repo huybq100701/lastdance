@@ -1,76 +1,119 @@
-"use client"
+"use client";
+
 import * as z from "zod";
 import { useForm } from "react-hook-form";
+import { useOrganization } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePathname, useRouter } from "next/navigation";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { createEvent, editEvent } from "@/lib/actions/event.actions";
-import EventValidation from "@/lib/validations/event";
 
-interface EventThreadProps {
-  authorId: string;
-  opponentId: string;
+import { EventValidation } from "@/lib/validations/event";
+import { createEvent, editEvent } from "@/lib/actions/event.actions";
+
+interface Props { 
+  userId: string;
   eventId?: string;
-  eventTitle?: string;
-  eventLocation?: string;
-  eventTime?: string;
-  eventDescription?: string;
+  threadTitle?: string;
+  threadLocation?: string;
+  threadTime?: string;
+  opponentId?: string;
+  userName? : string;
+  opponentName? : string;
+  threadDescription?: string;
 }
 
-function EventThread({ authorId, opponentId, eventId, eventTitle, eventLocation, eventTime, eventDescription }: EventThreadProps) {
+function PostEvent({ userId, eventId, threadTitle, opponentId, userName, opponentName,threadLocation, threadTime,threadDescription }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+
+  const { organization } = useOrganization();
 
   const form = useForm<z.infer<typeof EventValidation>>({
     resolver: zodResolver(EventValidation),
     defaultValues: {
-      title: eventTitle || '',
-      location: eventLocation || '',
-      eventTime: eventTime || '',
-      description: eventDescription || '',
+      title: threadTitle || "",
+      accountId: userId,
+      opponentId: opponentId,
+      location: threadLocation || "",
+      time: threadTime || "",
+      description: threadDescription || "",
     },
   });
-  console.log(eventTitle)
+
   const onSubmit = async (values: z.infer<typeof EventValidation>) => {
-    // try {
-      if (eventId) {
-      //   await editEvent({
-      //     eventId: eventId,
-      //     title: values.title,
-      //     location: values.location,
-      //     eventTime: new Date(values.eventTime),
-      //     description: values.description,
-      //     path: pathname,
-      //   });
-      // } else {
-        await createEvent({
-          title: values.title,
-          location: values.location,
-          currentUserId: authorId,
-          opponentId: opponentId,
-          eventTime: new Date(values.eventTime),
-          description: values.description,
-          path: pathname,
-        });
-      // }
-
-      router.push('/');
-
-    // } catch (error) {
-    //   console.error('Error occurred during form submission:', error);
+    if (eventId && threadTitle) {
+      await editEvent({
+        eventId,
+        title: values.title,
+        location: values.location,
+        time: values.time,
+        description: values.description,
+        path: pathname,
+      });
+    } else {
+      await createEvent({
+        author: userId,
+        authorName: userName,
+        opponent: opponentId,
+        opponentName: opponentName,
+        title: values.title,
+        location: values.location,
+        time: values.time,
+        description: values.description,
+        communityId: organization ? organization.id : null,
+        path: pathname,
+      });
     }
+
+    router.push("/");
   };
 
   return (
     <Form {...form}>
-        <div className="text-base-semibold text-light-2">Opponent: {opponentId}</div>
-      <div className="text-base-semibold text-light-2">Author: {authorId} </div>
       <form
         className="mt-10 flex flex-col justify-start gap-10"
         onSubmit={form.handleSubmit(onSubmit)}
       >
+         <FormField
+          control={form.control}
+          name="opponentId"
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col gap-3">
+              <FormLabel className="text-base-semibold text-light-2">
+                OpponentID : {opponentName}
+              </FormLabel>
+              <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
+                <input type="text" {...field} readOnly  />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="accountId"
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col gap-3">
+              <FormLabel className="text-base-semibold text-light-2">
+                AuthorID : {userName}
+              </FormLabel>
+              <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
+                <input type="text" {...field} readOnly  />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="title"
@@ -103,7 +146,7 @@ function EventThread({ authorId, opponentId, eventId, eventTitle, eventLocation,
         />
         <FormField
           control={form.control}
-          name="eventTime"
+          name="time"
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="text-base-semibold text-light-2">
@@ -116,7 +159,7 @@ function EventThread({ authorId, opponentId, eventId, eventTitle, eventLocation,
             </FormItem>
           )}
         />
-        <FormField
+          <FormField
           control={form.control}
           name="description"
           render={({ field }) => (
@@ -131,7 +174,6 @@ function EventThread({ authorId, opponentId, eventId, eventTitle, eventLocation,
             </FormItem>
           )}
         />
-
         <Button type="submit" className="bg-lime-500">
           {eventId ? "Edit" : "Create"} Event
         </Button>
@@ -140,4 +182,4 @@ function EventThread({ authorId, opponentId, eventId, eventTitle, eventLocation,
   );
 }
 
-export default EventThread;
+export default PostEvent;

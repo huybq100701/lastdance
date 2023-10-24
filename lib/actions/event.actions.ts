@@ -1,81 +1,90 @@
-
-import Event from "../models/event.model";
-import User from "../models/user.model";
-import { revalidatePath } from "next/cache";
+"use server"
 import { connectToDB } from "../mongoose";
+import { revalidatePath } from "next/cache";
+import User from "../models/user.model";
+import Event from "../models/event.model"; 
+
+interface Params {
+  author: string;
+  authorName: string;
+  communityId: string | null;
+  opponent: string;
+  opponentName: string;
+  title: string;
+  location: string;
+  time: string;
+  description: string;
+  path: string;
+}
 
 export async function editEvent({
   eventId,
   title,
   location,
-  eventTime,
+  time,
   description,
   path,
 }: {
   eventId: string;
   title: string;
-  location: string;
-  eventTime: Date;
-  description: string;
+  location: string,
+  time: string,
+  description: string,
   path: string;
 }) {
   try {
-    // connectToDB();
+    connectToDB();
 
     const event = await Event.findById(eventId);
 
     if (!event) {
-      throw new Error("Event not found");
+      throw new Error("Thread not found");
     }
 
     event.title = title;
     event.location = location;
-    event.eventTime = eventTime;
+    event.time = time;
     event.description = description;
 
     await event.save();
 
     revalidatePath(path);
   } catch (error: any) {
-    throw new Error(`Failed to edit event: ${error.message}`);
+    throw new Error(`Failed to edit thread: ${error.message}`);
   }
 }
-
 export async function createEvent({
+  author,
+  authorName,
+  opponent,
+  opponentName,
   title,
   location,
-  currentUserId,
-  opponentId,
-  eventTime,
+  time,
   description,
   path,
-}: {
-  title: string;
-  location: string;
-  currentUserId: string;
-  opponentId: string;
-  eventTime: Date;
-  description: string;
-  path: string;
-}) {
+}: Params) {
   try {
-    // connectToDB();
+    connectToDB();
 
-    const createdEvent = await Event.create({
+    const createEvent = await Event.create({
+      author,
+      authorName,
+      opponent,
+      opponentName,
       title,
       location,
-      author: currentUserId,
-      opponent: opponentId,
-      eventTime,
+      time,
       description,
     });
 
-    await User.findByIdAndUpdate(currentUserId, {
-      $push: { events: createdEvent._id },
-    });
+    // await User.findByIdAndUpdate(author, {
+    //   $push: { events: createEvent._id },
+    // });
+
 
     revalidatePath(path);
   } catch (error: any) {
-    throw new Error(`Failed to create event: ${error.message}`);
+    throw new Error(`Failed to create thread: ${error.message}`);
   }
 }

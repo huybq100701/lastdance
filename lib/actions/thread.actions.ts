@@ -19,7 +19,7 @@ export async function fetchExplore({
   pageSize?: number;
 }) {
   try {
-    // connectToDB();
+    connectToDB();
 
     // Calculate the number of posts to skip based on the page number and page size.
     const skipAmount = (pageNumber - 1) * pageSize;
@@ -75,7 +75,7 @@ export async function isThreadReactedByUser({
   userId: string;
 }) {
   try {
-    // connectToDB();
+    connectToDB();
 
     const thread = await Thread.findOne({ _id: threadId });
 
@@ -92,7 +92,7 @@ export async function isThreadReactedByUser({
 }
 export async function getReactedUsersByThread(threadId: string) {
   try {
-    // connectToDB();
+    connectToDB();
 
     const thread = await Thread.findOne({ _id: threadId });
 
@@ -113,7 +113,7 @@ export async function getReactedUsersByThread(threadId: string) {
 
 export async function fetchPosts(pageNumber = 1, pageSize = 20) {
   try {
-    // connectToDB();
+    connectToDB();
 
     // Calculate the number of posts to skip based on the page number and page size.
     const skipAmount = (pageNumber - 1) * pageSize;
@@ -172,7 +172,7 @@ export async function editThread({
   path: string;
 }) {
   try {
-    // connectToDB();
+    connectToDB();
 
     const thread = await Thread.findById(threadId);
 
@@ -196,7 +196,7 @@ export async function createThread({
   path,
 }: Params) {
   try {
-    // connectToDB();
+    connectToDB();
 
     const communityIdObject = await Community.findOne(
       { id: communityId },
@@ -241,7 +241,7 @@ async function fetchAllChildThreads(threadId: string): Promise<any[]> {
 
 export async function deleteThread(id: string, path: string): Promise<void> {
   try {
-    // connectToDB();
+    connectToDB();
 
     // Find the thread to be deleted (the main thread)
     const mainThread = await Thread.findById(id).populate("author community");
@@ -296,7 +296,7 @@ export async function deleteThread(id: string, path: string): Promise<void> {
 }
 
 export async function fetchThreadById(threadId: string) {
-  // connectToDB();
+  connectToDB();
 
   try {
     const thread = await Thread.findById(threadId)
@@ -348,7 +348,7 @@ export async function addReactToThread({
   path: string;
 }) {
   try {
-    // connectToDB();
+    connectToDB();
 
     const thread = await Thread.findById(threadId);
     const user = await User.findOne({ id: userId });
@@ -403,7 +403,7 @@ export async function addCommentToThread({
   userId: string;
   path: string;
 }) {
-  // connectToDB();
+  connectToDB();
 
   try {
     // Find the original thread by its ID
@@ -438,7 +438,7 @@ export async function addCommentToThread({
 
 export async function fetchPostReactions({ threadId }: { threadId: string }) {
   try {
-    // connectToDB();
+    connectToDB();
 
     const thread = await Thread.findOne({ id: threadId });
 
@@ -470,7 +470,7 @@ export async function getReactionsData({
   parentId?: string;
 }) {
   try {
-    // connectToDB();
+    connectToDB();
 
     const [parentReactions, parentReactionState, childrenData] =
       await Promise.all([

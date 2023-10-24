@@ -1,7 +1,6 @@
-// import { redirect } from "next/navigation";
-// import { fetchUserEvents } from "@/lib/actions/user.actions"; // Đảm bảo rằng bạn đã import fetchUserEvents từ thư viện user.actions
-
-// import EventCard from "../cards/EventCard"; // Đảm bảo rằng bạn đã import EventCard hoặc tạo một component tương tự
+// import React from 'react';
+// import { Calendar, momentLocalizer } from 'react-big-calendar';
+// import moment from 'moment';
 
 // interface EventData {
 //   _id: string;
@@ -22,47 +21,51 @@
 //   createdAt: string;
 // }
 
-// interface Props {
-//   currentUserId: string;
-//   accountId: string;
-//   accountType: string;
-// }
+// // Dữ liệu sự kiện giả định
+// const events: EventData[] = [
+//   {
+//     _id: '1',
+//     title: 'Meeting 1',
+//     location: 'New York',
+//     eventTime: '2023-10-25T10:00:00',
+//     description: 'Meeting with the team',
+//     author: {
+//       name: 'John Doe',
+//       image: 'url-to-image',
+//       id: 'author-id',
+//     },
+//     opponent: {
+//       name: 'Jane Doe',
+//       image: 'url-to-image',
+//       id: 'opponent-id',
+//     },
+//     createdAt: '2023-10-24T08:00:00',
+//   },
+//   // Thêm dữ liệu sự kiện khác tại đây
+// ];
 
-// async function EventTab({ currentUserId, accountId, accountType }: Props) {
-//   let events: EventData[];
+// const localizer = momentLocalizer(moment);
 
-//   events = await fetchUserEvents(accountId);
-
-//   if (!events) {
-//     redirect("/");
-//   }
+// const EventTab = () => {
+//   const eventsFormatted = events.map((event) => ({
+//     id: event._id,
+//     title: event.title,
+//     start: new Date(event.eventTime),
+//     end: new Date(event.eventTime),
+//     allDay: false,
+//   }));
 
 //   return (
-//     <section className="mt-9 flex flex-col gap-10">
-//       {events.map((event) => (
-//         <EventCard
-//           key={event._id}
-//           eventId={event._id}
-//           currentUserId={currentUserId}
-//           title={event.title}
-//           location={event.location}
-//           eventTime={event.eventTime}
-//           description={event.description}
-//           author={{
-//             name: event.author.name,
-//             image: event.author.image,
-//             id: event.author.id,
-//           }}
-//           opponent={{
-//             name: event.opponent.name,
-//             image: event.opponent.image,
-//             id: event.opponent.id,
-//           }}
-//           createdAt={event.createdAt}
-//         />
-//       ))}
-//     </section>
+//     <div style={{ height: 500 }}>
+//       <Calendar
+//         localizer={localizer}
+//         events={eventsFormatted}
+//         startAccessor="start"
+//         endAccessor="end"
+//         style={{ margin: '50px' }}
+//       />
+//     </div>
 //   );
-// }
+// };
 
 // export default EventTab;

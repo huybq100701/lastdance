@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
 const eventSchema = new mongoose.Schema({
   title: {
@@ -9,7 +9,7 @@ const eventSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  eventTime: {
+  time: {
     type: Date,
     required: true,
   },
@@ -17,22 +17,23 @@ const eventSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  authorId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
+  author: {
+    type: String,
   },
-  opponentId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
+  authorName:{
+    type: String,
+  },
+  opponent: {
+    type: String,
+  },
+  opponentName:{
+    type: String,
   },
   createdAt: {
     type: Date,
-    default: Date.now,
-  },
+    default: Date.now
+  }
 });
 
 const Event = mongoose.models.Event || mongoose.model("Event", eventSchema);
-
 export default Event;

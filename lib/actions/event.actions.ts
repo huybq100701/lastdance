@@ -124,3 +124,37 @@ export async function fetchEventById(eventId: string) {
     throw new Error("Unable to fetch event");
   }
 }
+
+
+export async function deleteEvent(id: string, path: string): Promise<void> {
+  try {
+    connectToDB();
+
+    const event = await Event.findById(id).populate("author community");
+
+    if (!event) {
+      throw new Error("Event not found");
+    }
+    await Event.deleteOne({ _id: id });
+
+    await User.updateOne(
+      { _id: event.author?._id },
+      { $pull: { events: id } }
+    );
+    await User.updateOne(
+      { _id: event.opponent?._id },
+      { $pull: { events: id } }
+    );
+
+    if (event.community) {
+      await Community.updateOne(
+        { _id: event.community?._id },
+        { $pull: { events: id } }
+      );
+    }
+
+    revalidatePath(path);
+  } catch (error: any) {
+    throw new Error(`Failed to delete event: ${error.message}`);
+  }
+}

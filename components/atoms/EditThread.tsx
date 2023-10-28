@@ -6,10 +6,11 @@ interface Props {
   threadId: string;
   currentUserId: string;
   authorId: string;
+
 }
 
 const EditThread = ({ threadId, currentUserId, authorId }: Props) => {
-  if (currentUserId !== authorId) return null;
+  if (currentUserId !== authorId ) return null;
 
   return (
     <Link href={`/edit-thread/${JSON.parse(threadId)}`}>

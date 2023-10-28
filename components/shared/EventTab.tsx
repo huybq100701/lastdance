@@ -60,6 +60,7 @@ async function EventTab({ currentUserId, authorId, accountType }: Props) {
         <EventCard
           key={event._id}
           id={event._id}
+          currentUserId={currentUserId}
           title={event.title}
           location={event.location}
           time ={event.time}

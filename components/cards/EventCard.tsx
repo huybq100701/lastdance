@@ -16,6 +16,11 @@ interface Props {
     name: string;
     image: string;
   };
+  opponent:{
+    id: string;
+    name: string;
+    image: string;
+  },
   community: {
     id: string;
     name: string;
@@ -32,13 +37,15 @@ function EventCard({
   description,
   currentUserId,
   author,
+  opponent,
   community,
   createdAt,
 }: Props) {
   const { id: authorId, name: authorName, image: authorImage } = author;
-  const { id: communityId, name: communityName, image: communityImage } =
-    community || {};
-
+  const { id: opponentId, name: opponentName, image: opponentImage } = opponent;
+  const { id: communityId, name: communityName, image: communityImage } = community || {};
+console.log("author", author)
+console.log("opponent", opponent)
   return (
     <div className="border border-gray-300 p-4 rounded-md shadow-md">
       <div className="flex flex-row gap-10">
@@ -60,6 +67,24 @@ function EventCard({
               <div className="text-sm text-gray-500">{formatDateString(createdAt)}</div>
             </div>
           </div>
+          <div className="text-sm font-medium text-white-900">Opponent: </div>
+          <div className="flex items-center space-x-4">
+            <div className="flex-shrink-0">
+              <Link href={`/profile/${opponentId}`} className="relative h-10 w-10">
+                <Image
+                  src={opponentImage}
+                  alt="Profile image"
+                  width={40}
+                  height={40}
+                  className="rounded-full"
+                />
+              </Link>
+            </div>
+            <div>
+              <div className="text-sm font-medium text-white-900">{opponentName}</div>
+             
+            </div>
+          </div>
           <div className="mt-2 text-white-700">Title: {title}</div>
           <div className="mt-2 text-white-700">Location: {location}</div>
           <div className="mt-2 text-white-500">Description: {description}</div>
@@ -69,11 +94,13 @@ function EventCard({
               eventId={JSON.stringify(id)}
               currentUserId={currentUserId}
               authorId={authorId}
+              opponentId={opponentId}
             />
             <EditEvent
               eventId={JSON.stringify(id)}
               currentUserId={currentUserId}
               authorId={authorId}
+               opponentId={opponentId}
             />
           </div>
         </div>

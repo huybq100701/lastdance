@@ -362,6 +362,11 @@ export async function fetchUserEvents(authorId: string) {
           model: Community,
           select: "name id image _id",
         },
+        {
+          path: "opponent",
+          model: User,
+          select: "name image id",
+        },
       ],
     });
     return events;

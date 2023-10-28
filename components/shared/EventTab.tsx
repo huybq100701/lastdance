@@ -19,6 +19,11 @@ interface Result {
       image: string;
       id: string;
     };
+    opponent:{
+      name: string;
+      image: string;
+      id: string;
+    }
     community: {
       id: string;
       name: string;
@@ -31,17 +36,18 @@ interface Result {
 interface Props {
   currentUserId: string;
   authorId: string;
+  opponentId: string;
   accountType: string;
 }
 
-async function EventTab({ currentUserId, authorId, accountType }: Props) {
+async function EventTab({ currentUserId, authorId,opponentId, accountType }: Props) {
   let result: Result;
 
   if (accountType === "User") {
 
     result = await fetchUserEvents(authorId);
   } else {
-    result = await fetchUserEvents(authorId);
+    result = await fetchUserEvents(opponentId);
   }
 
   if (!result) {
@@ -53,6 +59,12 @@ async function EventTab({ currentUserId, authorId, accountType }: Props) {
 
   const userInfo = await fetchUser(user.id);
   if (!userInfo?.onboarded) redirect("/onboarding");
+  
+  result.events.sort((a, b) => {
+    const dateA = new Date(a.createdAt);
+    const dateB = new Date(b.createdAt);
+    return dateB.getTime() - dateA.getTime();
+  });
 
   return (
     <section className="mt-9 flex flex-col gap-10">
@@ -72,6 +84,15 @@ async function EventTab({ currentUserId, authorId, accountType }: Props) {
                   name: event.author.name,
                   image: event.author.image,
                   id: event.author.id,
+                }
+          }
+          opponent={
+            accountType === "User"
+              ? { name: result.name, image: result.image, id: result.id }
+              : {
+                  name: event.opponent.name,
+                  image: event.opponent.image,
+                  id: event.opponent.id,
                 }
           }
           community={

@@ -76,7 +76,7 @@ export async function createEvent({
       description,
       author,
       opponent,
-      community: communityIdObject, // Assign communityId if provided, or leave it null for personal account
+      community: communityIdObject, 
     });
 
     // Update User model

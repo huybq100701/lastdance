@@ -89,11 +89,11 @@ function PostEvent({ authorId, opponentId, eventId, eventTitle, eventLocation, e
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="text-base-semibold text-light-2">
-                OpponentID 
+                OpponentID : {opponentId}
               </FormLabel>
-              <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
+              {/* <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
                 <input type="text" {...field} readOnly  />
-              </FormControl>
+              </FormControl> */}
               <FormMessage />
             </FormItem>
           )}
@@ -104,11 +104,11 @@ function PostEvent({ authorId, opponentId, eventId, eventTitle, eventLocation, e
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="text-base-semibold text-light-2">
-                AuthorID 
+                AuthorID : {authorId}
               </FormLabel>
-              <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
+              {/* <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
                 <input type="text" {...field} readOnly  />
-              </FormControl>
+              </FormControl> */}
               <FormMessage />
             </FormItem>
           )}

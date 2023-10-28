@@ -5,19 +5,19 @@ import { Button } from "../ui/button";
 
 interface Props {
   id: string;
+  _id: string;
   name: string;
   username: string;
   imgUrl: string;
   personType: string;
 }
 
-function UserCard({ id, name, username, imgUrl, personType }: Props) {
+function UserCard({ _id, id, name, username, imgUrl, personType }: Props) {
   const router = useRouter();
-
   const handleCreateEvent = () => {
     router.push(`/create-event/${id}`);
   };
-
+  console.log(_id)
   return (
     <article className="user-card">
       <div className="user-card_avatar">

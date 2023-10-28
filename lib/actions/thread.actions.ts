@@ -213,7 +213,7 @@ export async function createThread({
     await User.findByIdAndUpdate(author, {
       $push: { threads: createdThread._id },
     });
-
+console.log(author)
     if (communityIdObject) {
       // Update Community model
       await Community.findByIdAndUpdate(communityIdObject, {

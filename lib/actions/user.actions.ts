@@ -349,18 +349,21 @@ export async function getActivity(userId: string) {
   }
 }
 
-export async function fetchUserEvents(userId: string) {
+export async function fetchUserEvents(authorId: string) {
   try {
     connectToDB();
 
-    // Tìm tất cả các sự kiện được tạo bởi người dùng có userId cụ thể
-    const user = await User.findOne({ id: userId });
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    const events = await Event.find({ currentUserId: user._id });
-
+    const events = await User.findOne({ id: authorId }).populate({
+      path: "events",
+      model: Event,
+      populate: [
+        {
+          path: "community",
+          model: Community,
+          select: "name id image _id",
+        },
+      ],
+    });
     return events;
   } catch (error) {
     console.error("Error fetching user events:", error);

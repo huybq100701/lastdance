@@ -1,35 +1,61 @@
-// import { fetchUserEvents } from '@/lib/actions/user.actions';
-// import React, { useEffect, useState } from 'react';
+import Image from "next/image";
+import Link from "next/link";
+import { formatDateString } from "@/lib/utils";
 
-// function EventCard() {
-//   const [userEvents, setUserEvents] = useState([]);
+interface Props {
+  id: string;
+  text: string;
+  author: {
+    id: string;
+    name: string;
+    image: string;
+  };
+  community: {
+    id: string;
+    name: string;
+    image: string;
+  } | null;
+  createdAt: string;
+}
 
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const events = await fetchUserEvents(); // Gọi hàm fetchUserEvents để lấy dữ liệu từ server
-//         setUserEvents(events); // Cập nhật state với dữ liệu lấy được
-//       } catch (error) {
-//         console.error('Error fetching user events:', error);
-//       }
-//     };
+function EventCard({ id, text, author, community, createdAt }: Props) {
+  return (
+    <div className="border border-gray-300 p-4 rounded-md">
+      <div className="flex items-center space-x-4">
+        <div className="flex-shrink-0">
+          <Link href={`/profile/${author.id}`} className="relative h-10 w-10">
+            <Image
+              src={author.image}
+              alt="Profile image"
+              width={40}
+              height={40}
+              className="rounded-full"
+            />
+          </Link>
+        </div>
+        <div>
+          <div className="text-sm font-medium text-gray-900">{author.name}</div>
+          <div className="text-sm text-gray-500">{formatDateString(createdAt)}</div>
+        </div>
+      </div>
+      <div className="mt-2 text-gray-700">{text}</div>
+      {community && (
+        <div className="mt-4 flex items-center">
+          <Link href={`/communities/${community.id}`} className="flex items-center">
+            <Image
+              src={community.image}
+              alt={community.name}
+              width={16}
+              height={16}
+              className="rounded-full"
+            />
+            <span className="ml-2 text-sm text-gray-500">{community.name}</span>
+          </Link>
+        </div>
+      )}
+      
+    </div>
+  );
+}
 
-//     fetchData();
-//   }, []);
-
-//   return (
-//     <div>
-//       {userEvents.map((event) => (
-//         <div key={event.eventId}>
-//           <div>Title: {event.title}</div>
-//           <div>Location: {event.location}</div>
-//           <div>Event Time: {event.eventTime}</div>
-//           <div>Description: {event.description}</div>
-//           {/* Hiển thị các thông tin khác liên quan đến sự kiện ở đây */}
-//         </div>
-//       ))}
-//     </div>
-//   );
-// }
-
-// export default EventCard;
+export default EventCard;

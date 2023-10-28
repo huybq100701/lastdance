@@ -3,33 +3,23 @@ import { connectToDB } from "../mongoose";
 import { revalidatePath } from "next/cache";
 import User from "../models/user.model";
 import Event from "../models/event.model"; 
+import Community from "../models/community.model";
 
 interface Params {
+  text: string;
   author: string;
-  authorName: string;
-  communityId: string | null;
   opponent: string;
-  opponentName: string;
-  title: string;
-  location: string;
-  time: string;
-  description: string;
+  communityId: string | null;
   path: string;
 }
 
 export async function editEvent({
   eventId,
-  title,
-  location,
-  time,
-  description,
+  text,
   path,
 }: {
   eventId: string;
-  title: string;
-  location: string,
-  time: string,
-  description: string,
+  text: string;
   path: string;
 }) {
   try {
@@ -38,53 +28,81 @@ export async function editEvent({
     const event = await Event.findById(eventId);
 
     if (!event) {
-      throw new Error("Thread not found");
+      throw new Error("Event not found");
     }
 
-    event.title = title;
-    event.location = location;
-    event.time = time;
-    event.description = description;
+    event.text = text;
 
     await event.save();
 
     revalidatePath(path);
   } catch (error: any) {
-    throw new Error(`Failed to edit thread: ${error.message}`);
+    throw new Error(`Failed to edit event: ${error.message}`);
   }
 }
 export async function createEvent({
+  text,
   author,
-  authorName,
   opponent,
-  opponentName,
-  title,
-  location,
-  time,
-  description,
+  communityId,
   path,
 }: Params) {
   try {
     connectToDB();
 
-    const createEvent = await Event.create({
+    const communityIdObject = await Community.findOne(
+      { id: communityId },
+      { _id: 1 }
+    );
+
+    const createdEvent = await Event.create({
+      text,
       author,
-      authorName,
-      opponent,
-      opponentName,
-      title,
-      location,
-      time,
-      description,
+      community: communityIdObject, // Assign communityId if provided, or leave it null for personal account
     });
 
-    // await User.findByIdAndUpdate(author, {
-    //   $push: { events: createEvent._id },
-    // });
+    // Update User model
+    await User.findByIdAndUpdate(author, {
+      $push: { events: createdEvent._id },
+    });
+    await User.findByIdAndUpdate(opponent, {
+      $push: { events: createdEvent._id },
+    });
 
+    if (communityIdObject) {
+      // Update Community model
+      await Community.findByIdAndUpdate(communityIdObject, {
+        $push: { events: createdEvent._id },
+      });
+    }
 
     revalidatePath(path);
   } catch (error: any) {
-    throw new Error(`Failed to create thread: ${error.message}`);
+    throw new Error(`Failed to create event: ${error.message}`);
+  }
+}
+
+export async function fetchEventById(eventId: string) {
+  connectToDB();
+
+  try {
+    const event = await Event.findById(eventId)
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id id name image",
+      }) // Populate the author field with _id and username
+      .populate({
+        path: "community",
+        model: Community,
+        select: "_id id name image",
+      }) // Populate the community field with _id and name
+     
+      .exec();
+
+    return event;
+  } catch (err) {
+    console.error("Error while fetching event:", err);
+    throw new Error("Unable to fetch event");
   }
 }

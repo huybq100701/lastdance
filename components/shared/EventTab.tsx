@@ -1,71 +1,72 @@
-// import React from 'react';
-// import { Calendar, momentLocalizer } from 'react-big-calendar';
-// import moment from 'moment';
+import { redirect } from "next/navigation";
+import { fetchUser, fetchUserEvents } from "@/lib/actions/user.actions";
+import EventCard from "../cards/EventCard";
+import { currentUser } from "@clerk/nextjs";
+import PostEvent from "@/components/forms/PostEvent";
 
-// interface EventData {
-//   _id: string;
-//   title: string;
-//   location: string;
-//   eventTime: string;
-//   description: string;
-//   author: {
-//     name: string;
-//     image: string;
-//     id: string;
-//   };
-//   opponent: {
-//     name: string;
-//     image: string;
-//     id: string;
-//   };
-//   createdAt: string;
-// }
+interface Event {
+  _id: string;
+  text: string;
+  author: {
+    id: string;
+    name: string;
+    image: string;
+  }
+  community: {
+    id: string;
+    name: string;
+    image: string;
+  } | null;
+  createdAt: string;
+}
 
-// // Dữ liệu sự kiện giả định
-// const events: EventData[] = [
-//   {
-//     _id: '1',
-//     title: 'Meeting 1',
-//     location: 'New York',
-//     eventTime: '2023-10-25T10:00:00',
-//     description: 'Meeting with the team',
-//     author: {
-//       name: 'John Doe',
-//       image: 'url-to-image',
-//       id: 'author-id',
-//     },
-//     opponent: {
-//       name: 'Jane Doe',
-//       image: 'url-to-image',
-//       id: 'opponent-id',
-//     },
-//     createdAt: '2023-10-24T08:00:00',
-//   },
-//   // Thêm dữ liệu sự kiện khác tại đây
-// ];
+interface Props {
+  currentUserId: string;
+  authorId: string;
+  accountType: string;
+}
 
-// const localizer = momentLocalizer(moment);
+async function EventTab({ currentUserId, authorId, accountType }: Props) {
+  try {
+    let events: Event[] = [];
 
-// const EventTab = () => {
-//   const eventsFormatted = events.map((event) => ({
-//     id: event._id,
-//     title: event.title,
-//     start: new Date(event.eventTime),
-//     end: new Date(event.eventTime),
-//     allDay: false,
-//   }));
+    if (accountType === "User") {
+      events = await fetchUserEvents(authorId);
+    } else {
+      redirect("/");
+    }
 
-//   return (
-//     <div style={{ height: 500 }}>
-//       <Calendar
-//         localizer={localizer}
-//         events={eventsFormatted}
-//         startAccessor="start"
-//         endAccessor="end"
-//         style={{ margin: '50px' }}
-//       />
-//     </div>
-//   );
-// };
+    if (!events) {
+      redirect("/");
+    }
+    const user = await currentUser();
+    if (!user) return null;
 
-// export default EventTab;
+    const userInfo = await fetchUser(user.id);
+    if (!userInfo?.onboarded) redirect("/onboarding");
+    
+    return (
+      <section className="mt-9 flex flex-col gap-10">
+        <PostEvent
+          authorId={userInfo._id}
+          opponentId={userInfo.opponent} 
+        />
+        {events.map((event) => (
+          <EventCard
+            key={event._id}
+            id={event._id}
+            text={event.text}
+            author={event.author}
+            community={event.community}
+            createdAt={event.createdAt}
+          />
+        ))}
+      </section>
+    );
+  } catch (error) {
+    console.error("Error in EventTab:", error);
+    throw error;
+  }
+}
+
+export default EventTab;

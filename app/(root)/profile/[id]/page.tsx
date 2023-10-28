@@ -3,7 +3,6 @@ import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 import { profileTabs } from "@/constants";
-import EventTabs from "@/components/shared/EventTab";
 import ThreadsTab from "@/components/shared/ThreadsTab";
 import ProfileHeader from "@/components/shared/ProfileHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,6 +15,7 @@ import {
 } from "@/lib/actions/user.actions";
 import UserCard from "@/components/cards/UserCard";
 import EventCard from "@/components/cards/EventCard";
+import EventTab from "@/components/shared/EventTab";
 
 async function Page({ params }: { params: { id: string } }) {
   const user = await currentUser();
@@ -30,6 +30,7 @@ async function Page({ params }: { params: { id: string } }) {
   const isFollowing = await isUserFollowing(user.id, params.id);
   const userEvents = await fetchUserEvents(params.id);
   const events = userEvents; 
+  console.log(userInfo.threadsCount)
   return (
     <section>
       <ProfileHeader
@@ -55,7 +56,7 @@ async function Page({ params }: { params: { id: string } }) {
                   className="object-contain"
                 />
                 <p className="max-sm:hidden">{tab.label}</p>
-                {tab.label === "Threads" && (
+                {tab.label === "Posts" && (
                   <p className="ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2">
                     {userInfo.threadsCount}
                   </p>
@@ -70,7 +71,7 @@ async function Page({ params }: { params: { id: string } }) {
                     {userInfo.followingCount}
                   </p>
                 )}
-                 {tab.label === "Events" && (
+                {tab.label === "Events" && (
                   <p className="ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2">
                     {userInfo.eventsCount}
                   </p>
@@ -104,6 +105,7 @@ async function Page({ params }: { params: { id: string } }) {
                     <UserCard
                       key={follower.id}
                       id={follower.id}
+                      _id={follower._id}
                       name={follower.name}
                       username={follower.username}
                       imgUrl={follower.image}
@@ -125,6 +127,7 @@ async function Page({ params }: { params: { id: string } }) {
                     <UserCard
                       key={following.id}
                       id={following.id}
+                      _id={following._id}
                       name={following.name}
                       username={following.username}
                       imgUrl={following.image}
@@ -138,28 +141,27 @@ async function Page({ params }: { params: { id: string } }) {
 
           <TabsContent value="events" className="w-full text-light-1">
             <div className="mt-9 flex flex-col gap-10">
-              {userInfo.eventsCount === 0 ? (
+              {Array.isArray(events) && events.length === 0 ? (
                 <p className="no-result">No events found</p>
               ) : (
                 <>
-                  {events.map((event: any) => (
-                    <EventCard
-                      key={event.eventId} 
-                      eventId={event.eventId}
-                      currentUserId={event.currentUserId}
-                      title={event.title}
-                      location={event.location}
-                      eventTime={event.eventTime}
-                      description={event.description}
-                      author={event.author}
-                      community={event.community}
-                      createdAt={event.createdAt}
-                    />
-                  ))}
+                  {Array.isArray(events) &&
+                    events.map((event) => (
+                      <EventCard
+                        key={event._id}
+                        id={event._id}
+                        text={event.text}
+                        author={event.author}
+                        community={event.community}
+                        createdAt={event.createdAt}
+                      />
+                    ))}
                 </>
               )}
             </div>
           </TabsContent>
+
+
         </Tabs>
       </div>
     </section>

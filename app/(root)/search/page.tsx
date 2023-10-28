@@ -16,15 +16,15 @@ async function Page({
   if (!user) return null;
 
   const userInfo = await fetchUser(user.id);
-  if (!userInfo?.onboarded) redirect("/onboarding");
 
+  if (!userInfo?.onboarded) redirect("/onboarding");
   const result = await fetchUsers({
     userId: user.id,
     searchTerm: searchParams.q,
     pageNumber: searchParams?.page ? +searchParams.page : 1,
     pageSize: 25,
   });
-
+  
   return (
     <section>
       <h1 className='head-text mb-10'>Search</h1>
@@ -40,6 +40,7 @@ async function Page({
               <UserCard
                 key={person.id}
                 id={person.id}
+                _id={person._id}
                 name={person.name}
                 username={person.username}
                 imgUrl={person.image}

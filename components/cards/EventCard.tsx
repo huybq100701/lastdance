@@ -4,7 +4,10 @@ import { formatDateString } from "@/lib/utils";
 
 interface Props {
   id: string;
-  text: string;
+  title: string;
+  time: string;
+  location: string;
+  description: string;
   author: {
     id: string;
     name: string;
@@ -18,7 +21,7 @@ interface Props {
   createdAt: string;
 }
 
-function EventCard({ id, text, author, community, createdAt }: Props) {
+function EventCard({ id, title,time, location, description, author, community, createdAt }: Props) {
   return (
     <div className="border border-gray-300 p-4 rounded-md shadow-md">
       <div className="flex items-center space-x-4">
@@ -38,7 +41,10 @@ function EventCard({ id, text, author, community, createdAt }: Props) {
           <div className="text-sm text-gray-500">{formatDateString(createdAt)}</div>
         </div>
       </div>
-      <div className="mt-2 text-white-700">{text}</div>
+      <div className="mt-2 text-white-700">{title}</div>
+      <div className="mt-2 text-white-700">{location}</div>
+      <div className="mt-2 text-white-700">{time}</div>
+      <div className="mt-2 text-white-700">{description}</div>
       {community && (
         <div className="mt-4 flex items-center">
           <Link href={`/communities/${community.id}`} className="flex items-center">

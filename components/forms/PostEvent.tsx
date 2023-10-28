@@ -16,42 +16,56 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { EventValidation } from "@/lib/validations/event";
 import { createEvent, editEvent } from "@/lib/actions/event.actions";
+import { useState } from "react";
 
 interface Props {
   authorId: string;
   opponentId: string;
   eventId?: string;
-  eventText?: string;
+  eventTitle?: string;
+  eventLocation?: string;
+  eventTime?: Date;
+  eventDescription?: string;
 }
 
-function PostEvent({ authorId, opponentId, eventId, eventText }: Props) {
+function PostEvent({ authorId, opponentId, eventId, eventTitle, eventLocation, eventTime,eventDescription }: Props) {
   const router = useRouter();
   const pathname = usePathname();
-
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const { organization } = useOrganization();
 
   const form = useForm<z.infer<typeof EventValidation>>({
     resolver: zodResolver(EventValidation),
     defaultValues: {
-      event: eventText || "",
+      title: eventTitle || "",
+      location: eventLocation || "",
+      time : eventTime || new Date(),
+      description: eventDescription || "",
       authorId: authorId,
       opponentId: opponentId,
     },
   });
 
   const onSubmit = async (values: z.infer<typeof EventValidation>) => {
-    if (eventId && eventText) {
+    if (eventId && eventTitle) {
       await editEvent({
         eventId,
-        text: values.event,
+        title: values.title,
+        location: values.location,
+        time: selectedDate,
+        description: values.description,
         path: pathname,
       });
     } else {
       await createEvent({
-        text: values.event,
+        title: values.title,
+        location: values.location,
+        time: selectedDate,
+        description: values.description,
         author: authorId,
         opponent: opponentId,
         communityId: organization ? organization.id : null,
@@ -90,7 +104,7 @@ function PostEvent({ authorId, opponentId, eventId, eventText }: Props) {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="text-base-semibold text-light-2">
-                AuthorID : {authorId}
+                AuthorID 
               </FormLabel>
               <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
                 <input type="text" {...field} readOnly  />
@@ -101,20 +115,73 @@ function PostEvent({ authorId, opponentId, eventId, eventText }: Props) {
         />
         <FormField
           control={form.control}
-          name="event"
+          name="title"
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="text-base-semibold text-light-2">
-                Content
+                Title
               </FormLabel>
               <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
-                <Textarea rows={15} {...field} />
+                <Textarea rows={5} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-
+        <FormField
+          control={form.control}
+          name="location"
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col gap-3">
+              <FormLabel className="text-base-semibold text-light-2">
+                Location
+              </FormLabel>
+              <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
+                <input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+           <FormField
+          control={form.control}
+          name="time"
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col gap-3">
+            <FormLabel className="text-base-semibold text-light-2">
+              Time
+            </FormLabel>
+            <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
+              <DatePicker
+                {...field}
+                selected={field.value}
+                onChange={(value) => {
+                  const date = new Date(value);
+                  form.setValue("time", date);
+                }}
+                showTimeSelect
+                dateFormat="MMMM d, yyyy h:mm aa"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+          )}
+        />
+         <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col gap-3">
+              <FormLabel className="text-base-semibold text-light-2">
+                Description
+              </FormLabel>
+              <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
+                <Textarea rows={5} {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <Button type="submit" className="bg-lime-500">
           {eventId ? "Edit" : "Create"} Event
         </Button>

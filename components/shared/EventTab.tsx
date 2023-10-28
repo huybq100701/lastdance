@@ -10,7 +10,10 @@ interface Result {
   id: string;
   events: {
     _id: string;
-    text: string;
+    title: string;
+    time:string;
+    location: string;
+    description: string;
     author: {
       name: string;
       image: string;
@@ -57,7 +60,10 @@ async function EventTab({ currentUserId, authorId, accountType }: Props) {
         <EventCard
           key={event._id}
           id={event._id}
-          text={event.text}
+          title={event.title}
+          location={event.location}
+          time ={event.time}
+          description={event.description}
           author={
             accountType === "User"
               ? { name: result.name, image: result.image, id: result.id }

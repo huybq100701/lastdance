@@ -6,7 +6,10 @@ import Event from "../models/event.model";
 import Community from "../models/community.model";
 
 interface Params {
-  text: string;
+  title: string;
+  location: string;
+  time: Date;
+  description: string;
   author: string;
   opponent: string;
   communityId: string | null;
@@ -15,11 +18,17 @@ interface Params {
 
 export async function editEvent({
   eventId,
-  text,
+  title,
+  location,
+  time,
+  description,
   path,
 }: {
   eventId: string;
-  text: string;
+  title: string;
+  location: string;
+  time: Date;
+  description: string;
   path: string;
 }) {
   try {
@@ -31,8 +40,10 @@ export async function editEvent({
       throw new Error("Event not found");
     }
 
-    event.text = text;
-
+    event.title = title;
+    event.location = location;
+    event.time = time;
+    event.description = description;
     await event.save();
 
     revalidatePath(path);
@@ -41,7 +52,10 @@ export async function editEvent({
   }
 }
 export async function createEvent({
-  text,
+  title,
+  location,
+  time,
+  description,
   author,
   opponent,
   communityId,
@@ -56,8 +70,12 @@ export async function createEvent({
     );
 
     const createdEvent = await Event.create({
-      text,
+      title,
+      location,
+      time,
+      description,
       author,
+      opponent,
       community: communityIdObject, // Assign communityId if provided, or leave it null for personal account
     });
 

@@ -63,7 +63,7 @@ async function ThreadsTab({ currentUserId, accountId, accountType }: Props) {
     userId: userInfo._id,
     posts: result.threads,
   });
-
+  console.log(reactionsData)
   const { childrenReactions, childrenReactionState } = reactionsData;
 
   return (

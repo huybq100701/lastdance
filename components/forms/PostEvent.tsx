@@ -69,7 +69,7 @@ function PostEvent({ authorId, opponentId, eventId, eventText }: Props) {
         className="mt-10 flex flex-col justify-start gap-10"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <FormField
+         <FormField
           control={form.control}
           name="opponentId"
           render={({ field }) => (
@@ -90,7 +90,7 @@ function PostEvent({ authorId, opponentId, eventId, eventText }: Props) {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="text-base-semibold text-light-2">
-                AuthorID 
+                AuthorID : {authorId}
               </FormLabel>
               <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
                 <input type="text" {...field} readOnly  />

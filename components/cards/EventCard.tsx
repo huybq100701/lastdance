@@ -20,7 +20,7 @@ interface Props {
 
 function EventCard({ id, text, author, community, createdAt }: Props) {
   return (
-    <div className="border border-gray-300 p-4 rounded-md">
+    <div className="border border-gray-300 p-4 rounded-md shadow-md">
       <div className="flex items-center space-x-4">
         <div className="flex-shrink-0">
           <Link href={`/profile/${author.id}`} className="relative h-10 w-10">
@@ -34,11 +34,11 @@ function EventCard({ id, text, author, community, createdAt }: Props) {
           </Link>
         </div>
         <div>
-          <div className="text-sm font-medium text-gray-900">{author.name}</div>
+          <div className="text-sm font-medium text-white-900">{author.name}</div>
           <div className="text-sm text-gray-500">{formatDateString(createdAt)}</div>
         </div>
       </div>
-      <div className="mt-2 text-gray-700">{text}</div>
+      <div className="mt-2 text-white-700">{text}</div>
       {community && (
         <div className="mt-4 flex items-center">
           <Link href={`/communities/${community.id}`} className="flex items-center">

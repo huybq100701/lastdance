@@ -14,7 +14,6 @@ import {
   isUserFollowing,
 } from "@/lib/actions/user.actions";
 import UserCard from "@/components/cards/UserCard";
-import EventCard from "@/components/cards/EventCard";
 import EventTab from "@/components/shared/EventTab";
 
 async function Page({ params }: { params: { id: string } }) {
@@ -30,7 +29,7 @@ async function Page({ params }: { params: { id: string } }) {
   const isFollowing = await isUserFollowing(user.id, params.id);
   const userEvents = await fetchUserEvents(params.id);
   const events = userEvents; 
-  console.log(userInfo.threadsCount)
+
   return (
     <section>
       <ProfileHeader
@@ -139,26 +138,20 @@ async function Page({ params }: { params: { id: string } }) {
             </div>
           </TabsContent>
 
+         
           <TabsContent value="events" className="w-full text-light-1">
-            <div className="mt-9 flex flex-col gap-10">
-              {Array.isArray(events) && events.length === 0 ? (
+            {/* @ts-ignore */}{" "}
+            {userInfo.eventsCount === 0 ? (
+              <div className="mt-9 flex flex-col gap-10">
                 <p className="no-result">No events found</p>
-              ) : (
-                <>
-                  {Array.isArray(events) &&
-                    events.map((event) => (
-                      <EventCard
-                        key={event._id}
-                        id={event._id}
-                        text={event.text}
-                        author={event.author}
-                        community={event.community}
-                        createdAt={event.createdAt}
-                      />
-                    ))}
-                </>
-              )}
-            </div>
+              </div>
+            ) : (
+              <EventTab
+                currentUserId={user.id}
+                authorId={userInfo.id}
+                accountType="User"
+              />
+            )}
           </TabsContent>
 
 

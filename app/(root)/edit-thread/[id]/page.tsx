@@ -18,12 +18,13 @@ const Page = async ({ params }: { params: { id: string } }) => {
 
   return (
     <>
-      <h1 className="head-text">Edit Thread</h1>
+      <h1 className="head-text">Edit Post</h1>
 
       <PostThread
         userId={userInfo._id}
         threadId={thread.id}
         threadText={thread.text}
+        
       />
     </>
   );

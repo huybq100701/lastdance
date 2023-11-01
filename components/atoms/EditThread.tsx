@@ -6,7 +6,6 @@ interface Props {
   threadId: string;
   currentUserId: string;
   authorId: string;
-
 }
 
 const EditThread = ({ threadId, currentUserId, authorId }: Props) => {

@@ -44,8 +44,7 @@ function EventCard({
   const { id: authorId, name: authorName, image: authorImage } = author;
   const { id: opponentId, name: opponentName, image: opponentImage } = opponent;
   const { id: communityId, name: communityName, image: communityImage } = community || {};
-console.log("author", author)
-console.log("opponent", opponent)
+
   return (
     <div className="border border-gray-300 p-4 rounded-md shadow-md">
       <div className="flex flex-row gap-10">
@@ -100,7 +99,6 @@ console.log("opponent", opponent)
               eventId={JSON.stringify(id)}
               currentUserId={currentUserId}
               authorId={authorId}
-               opponentId={opponentId}
             />
           </div>
         </div>

@@ -115,7 +115,11 @@ export async function fetchEventById(eventId: string) {
         model: Community,
         select: "_id id name image",
       }) // Populate the community field with _id and name
-     
+     .populate({
+      path: "opponent",
+      model: User,
+      select: "_id id name image",
+    })
       .exec();
 
     return event;

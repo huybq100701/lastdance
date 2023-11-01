@@ -6,11 +6,10 @@ interface Props {
   eventId: string;
   currentUserId: string;
   authorId: string;
-  opponentId: string;
 }
 
-const EditEvent = ({ eventId, currentUserId, authorId, opponentId }: Props) => {
-  if (currentUserId !== authorId || currentUserId!== opponentId ) return null;
+const EditEvent = ({ eventId, currentUserId, authorId }: Props) => {
+  if (currentUserId !== authorId  ) return null;
 
   return (
     <Link href={`/edit-event/${JSON.parse(eventId)}`}>

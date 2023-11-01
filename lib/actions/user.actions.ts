@@ -349,11 +349,10 @@ export async function getActivity(userId: string) {
   }
 }
 
-export async function fetchUserEvents(authorId: string) {
+export async function fetchUserEvents(userId: string) {
   try {
     connectToDB();
-
-    const events = await User.findOne({ id: authorId }).populate({
+    const events = await User.findOne({ id: userId }).populate({
       path: "events",
       model: Event,
       populate: [
@@ -362,11 +361,11 @@ export async function fetchUserEvents(authorId: string) {
           model: Community,
           select: "name id image _id",
         },
-        {
-          path: "opponent",
-          model: User,
-          select: "name image id",
-        },
+        // {
+        //   path: "opponent",
+        //   model: User,
+        //   select: "name image id _id",
+        // },
       ],
     });
     return events;

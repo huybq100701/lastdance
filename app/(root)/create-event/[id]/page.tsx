@@ -11,8 +11,8 @@ async function Page({ params }: { params: { id: string } }) {
   const userInfo = await fetchUser(params.id);
   const currentUserInfo = await fetchUser(user.id);
 
-  console.log("currentUser", currentUserInfo.name);
-  console.log("userInfo", userInfo.name);
+  console.log("currentUser", currentUserInfo.id);
+  console.log("userInfo", userInfo.id);
 
   if (!userInfo?.onboarded) {
     redirect("/onboarding");
@@ -22,7 +22,7 @@ async function Page({ params }: { params: { id: string } }) {
   return (
     <>
       <h1 className='head-text'>Create Event</h1>
-      <PostEvent opponentId={userInfo._id} authorId ={currentUserInfo._id} />
+      <PostEvent opponentId={userInfo._id} authorId ={currentUserInfo._id} userId={userInfo._id}/>
     </>
   );
 }

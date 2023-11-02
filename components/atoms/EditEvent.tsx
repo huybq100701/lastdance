@@ -6,6 +6,7 @@ interface Props {
   eventId: string;
   currentUserId: string;
   authorId: string;
+
 }
 
 const EditEvent = ({ eventId, currentUserId, authorId }: Props) => {

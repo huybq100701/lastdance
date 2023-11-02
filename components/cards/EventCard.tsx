@@ -41,9 +41,11 @@ function EventCard({
   community,
   createdAt,
 }: Props) {
-  const { id: authorId, name: authorName, image: authorImage } = author;
-  const { id: opponentId, name: opponentName, image: opponentImage } = opponent;
-  const { id: communityId, name: communityName, image: communityImage } = community || {};
+  // const { id: authorId, name: authorName, image: authorImage } = author;
+  // const { id: opponentId, name: opponentName, image: opponentImage } = opponent;
+  // const { id: communityId, name: communityName, image: communityImage } = community || {};
+  console.log("opponent", opponent)
+  console.log('author',author)
 
   return (
     <div className="border border-gray-300 p-4 rounded-md shadow-md">
@@ -51,9 +53,9 @@ function EventCard({
         <div className="flex flex-col">
           <div className="flex items-center space-x-4">
             <div className="flex-shrink-0">
-              <Link href={`/profile/${authorId}`} className="relative h-10 w-10">
+              <Link href={`/profile/${author.id}`} className="relative h-10 w-10">
                 <Image
-                  src={authorImage}
+                  src={author.image}
                   alt="Profile image"
                   width={40}
                   height={40}
@@ -62,16 +64,16 @@ function EventCard({
               </Link>
             </div>
             <div>
-              <div className="text-sm font-medium text-white-900">{authorName}</div>
+              <div className="text-sm font-medium text-white-900">{author.name}</div>
               <div className="text-sm text-gray-500">{formatDateString(createdAt)}</div>
             </div>
           </div>
           <div className="text-sm font-medium text-white-900">Opponent: </div>
           <div className="flex items-center space-x-4">
             <div className="flex-shrink-0">
-              <Link href={`/profile/${opponentId}`} className="relative h-10 w-10">
+              <Link href={`/profile/${opponent.id}`} className="relative h-10 w-10">
                 <Image
-                  src={opponentImage}
+                  src={opponent.image}
                   alt="Profile image"
                   width={40}
                   height={40}
@@ -80,7 +82,7 @@ function EventCard({
               </Link>
             </div>
             <div>
-              <div className="text-sm font-medium text-white-900">{opponentName}</div>
+              <div className="text-sm font-medium text-white-900">{opponent.name}</div>
              
             </div>
           </div>
@@ -92,19 +94,19 @@ function EventCard({
             <DeleteEvent
               eventId={JSON.stringify(id)}
               currentUserId={currentUserId}
-              authorId={authorId}
-              opponentId={opponentId}
+              authorId={author.id}
+              opponentId={opponent.id}
             />
             <EditEvent
               eventId={JSON.stringify(id)}
               currentUserId={currentUserId}
-              authorId={authorId}
+              authorId={author.id}
             />
           </div>
         </div>
         {community && (
           <div className="mt-4 flex items-center">
-            <Link href={`/communities/${communityId}`} className="flex items-center">
+            <Link href={`/communities/${community.id}`} className="flex items-center">
               <Image
                 src={community.image}
                 alt={community.name}
@@ -112,7 +114,7 @@ function EventCard({
                 height={16}
                 className="rounded-full"
               />
-              <span className="ml-2 text-sm text-gray-500">{communityName}</span>
+              <span className="ml-2 text-sm text-gray-500">{community.name}</span>
             </Link>
           </div>
         )}

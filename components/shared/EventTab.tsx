@@ -67,7 +67,7 @@ async function EventTab({ currentUserId, accountId , accountType }: Props) {
     const dateB = new Date(b.createdAt);
     return dateB.getTime() - dateA.getTime();
   });
-  
+
   return (
     <section className="mt-9 flex flex-col gap-10">
       {result.events.map((event) => (
@@ -85,9 +85,9 @@ async function EventTab({ currentUserId, accountId , accountType }: Props) {
               : { name: event.author.name, image: event.author.image, id: event.author.id }
           }
           opponent={
-            accountType === "User"
-              ? { name: result.name, image: result.image, id: result.id }
-              : { name: event.opponent.name, image: event.opponent.image, id: event.opponent.id }
+            event.opponent
+              ? { name: event.opponent.name, image: event.opponent.image, id: event.opponent.id }
+              : { name: result.name, image: result.image, id: result.id }
           }
           community={
             accountType === "Community"

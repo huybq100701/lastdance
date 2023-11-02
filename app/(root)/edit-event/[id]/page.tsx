@@ -1,4 +1,5 @@
 
+import PostEditedEvent from "@/components/forms/PostEditedEvent";
 import PostEvent from "@/components/forms/PostEvent";
 import { fetchEventById } from "@/lib/actions/event.actions";
 import { fetchUser } from "@/lib/actions/user.actions";
@@ -22,9 +23,8 @@ const Page = async ({ params }: { params: { id: string } }) => {
     <>
       <h1 className="head-text">Edit Event</h1>
 
-      <PostEvent
-        authorId={currentUserInfo._id}
-        opponentId={userInfo._id}
+      <PostEditedEvent
+        userId={userInfo._id}
         eventId={event.id}
         eventTitle={event.title}
         eventLocation={event.location}

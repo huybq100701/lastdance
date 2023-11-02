@@ -24,8 +24,6 @@ import { useState } from "react";
 
 interface Props {
   userId: string;
-  authorId: string;
-  opponentId: string;
   eventId?: string;
   eventTitle?: string;
   eventLocation?: string;
@@ -33,7 +31,7 @@ interface Props {
   eventDescription?: string;
 }
 
-function PostEvent({ userId, authorId, opponentId, eventId, eventTitle, eventLocation, eventTime,eventDescription }: Props) {
+function PostEditedEvent({ userId, eventId, eventTitle, eventLocation, eventTime,eventDescription }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -46,20 +44,26 @@ function PostEvent({ userId, authorId, opponentId, eventId, eventTitle, eventLoc
       location: eventLocation || "",
       time : eventTime || new Date(),
       description: eventDescription || "",
-      authorId: authorId,
-      opponentId: opponentId,
+      accountId: userId,
     },
   });
 
   const onSubmit = async (values: z.infer<typeof EventValidation>) => {
     if (eventId && eventTitle) {
+      await editEvent({
+        eventId,
+        title: values.title,
+        location: values.location,
+        time: selectedDate,
+        description: values.description,
+        path: pathname,
+      });
+    } else {
       await createEvent({
         title: values.title,
         location: values.location,
         time: selectedDate,
         description: values.description,
-        author: authorId,
-        opponent: opponentId,
         communityId: organization ? organization.id : null,
         path: pathname,
       });
@@ -182,4 +186,4 @@ function PostEvent({ userId, authorId, opponentId, eventId, eventTitle, eventLoc
   );
 }
 
-export default PostEvent;
+export default PostEditedEvent;

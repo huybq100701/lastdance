@@ -17,7 +17,6 @@ function UserCard({ _id, id, name, username, imgUrl, personType }: Props) {
   const handleCreateEvent = () => {
     router.push(`/create-event/${id}`);
   };
-  console.log(_id)
   return (
     <article className="user-card">
       <div className="user-card_avatar">

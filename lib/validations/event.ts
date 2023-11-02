@@ -7,4 +7,5 @@ export const EventValidation = z.object({
   description: z.string(),
   authorId: z.string(),
   opponentId: z.string(),
+  accountId: z.string(),
 });

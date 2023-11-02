@@ -23,8 +23,9 @@ const Page = async ({ params }: { params: { id: string } }) => {
       <h1 className="head-text">Edit Event</h1>
 
       <PostEvent
-        authorId={currentUserInfo._id}
-        opponentId={userInfo._id}
+        currentUserId={currentUserInfo._id}
+        authorId={event.author}
+        opponentId={event.opponent}
         eventId={event.id}
         eventTitle={event.title}
         eventLocation={event.location}

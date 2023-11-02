@@ -21,14 +21,15 @@ async function Page({ params }: { params: { id: string } }) {
   if (!user) return null;
 
   const userInfo = await fetchUser(params.id);
+  const currentUserInfo = await fetchUser(user.id);
+
+
   if (!userInfo?.onboarded) redirect("/onboarding");
 
   const followers = await fetchUsersByField(params.id, "followers");
   const following = await fetchUsersByField(params.id, "following");
 
   const isFollowing = await isUserFollowing(user.id, params.id);
-  const userEvents = await fetchUserEvents(params.id);
-  const events = userEvents; 
 
   return (
     <section>
@@ -119,7 +120,7 @@ async function Page({ params }: { params: { id: string } }) {
           <TabsContent value="following" className="w-full text-light-1">
             <div className="mt-9 flex flex-col gap-10">
               {userInfo.followingCount === 0 ? (
-                <p className="no-result">No users found</p>
+                <p className="no-result">No users found</p> 
               ) : (
                 <>
                   {following.map((following: any) => (
@@ -148,7 +149,7 @@ async function Page({ params }: { params: { id: string } }) {
             ) : (
               <EventTab
                 currentUserId={user.id}
-                authorId={userInfo.id}
+                accountId={userInfo.id}
                 accountType="User"
               />
             )}

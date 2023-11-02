@@ -21,7 +21,7 @@ function DeleteEvent({
   const pathname = usePathname();
   const router = useRouter();
 
-  if (currentUserId !== authorId || currentUserId !== opponentId) return null;
+  if (currentUserId !== authorId && currentUserId !== opponentId) return null;
 
   const handleClick = async () => {
     await deleteEvent(JSON.parse(eventId), pathname);

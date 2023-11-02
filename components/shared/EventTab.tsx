@@ -28,32 +28,29 @@ interface Event {
   createdAt: string;
 }
 
-interface Result {
-  name: string;
-  image: string;
-  id: string;
-  events: Event[];
-}
-
 interface Props {
   currentUserId: string;
   accountId: string;
   accountType: string;
 }
 
-async function EventTab({ currentUserId, accountId , accountType }: Props) {
-  let result: Result;
+async function EventTab({ currentUserId, accountId, accountType }: Props) {
+  let events: Event[];
 
   if (accountType === "User") {
-    result = await fetchUserEvents(accountId);
+    const userEvents = await fetchUserEvents(accountId);
+    if (!userEvents) {
+      redirect("/");
+    }
+    events = userEvents.events;
   } else {
-    result = await fetchUserEvents(accountId);
+    const user = await fetchUser(accountId);
+    if (!user) {
+      redirect("/");
+    }
+    events = user.events;
   }
 
-  if (!result) {
-    redirect("/");
-  }
-  console.log(result.events)
   const user = await currentUser();
   if (!user) return null;
 
@@ -62,7 +59,7 @@ async function EventTab({ currentUserId, accountId , accountType }: Props) {
     redirect("/onboarding");
   }
 
-  result.events.sort((a, b) => {
+  events.sort((a, b) => {
     const dateA = new Date(a.createdAt);
     const dateB = new Date(b.createdAt);
     return dateB.getTime() - dateA.getTime();
@@ -70,7 +67,7 @@ async function EventTab({ currentUserId, accountId , accountType }: Props) {
 
   return (
     <section className="mt-9 flex flex-col gap-10">
-      {result.events.map((event) => (
+      {events.map((event) => (
         <EventCard
           key={event._id}
           id={event._id}
@@ -80,18 +77,18 @@ async function EventTab({ currentUserId, accountId , accountType }: Props) {
           time={event.time}
           description={event.description}
           author={
-            accountType === "User"
-              ? { name: result.name, image: result.image, id: result.id }
-              : { name: event.author.name, image: event.author.image, id: event.author.id }
+            event.author
+              ? { name: event.author.name, image: event.author.image, id: event.author.id }
+              : { name: userInfo.name, image: userInfo.image, id: userInfo.id }
           }
           opponent={
             event.opponent
               ? { name: event.opponent.name, image: event.opponent.image, id: event.opponent.id }
-              : { name: result.name, image: result.image, id: result.id }
+              : { name: userInfo.name, image: userInfo.image, id: userInfo.id }
           }
           community={
             accountType === "Community"
-              ? { name: result.name, id: result.id, image: result.image }
+              ? { name: userInfo.name, id: userInfo.id, image: userInfo.image }
               : event.community
           }
           createdAt={event.createdAt}

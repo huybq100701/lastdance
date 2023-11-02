@@ -363,6 +363,11 @@ export async function fetchUserEvents(authorId: string) {
           select: "name id image _id",
         },
         {
+          path: "author",
+          model: User,
+          select: "name image id",
+        },
+        {
           path: "opponent",
           model: User,
           select: "name image id",

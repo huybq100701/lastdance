@@ -41,16 +41,12 @@ function EventCard({
   community,
   createdAt,
 }: Props) {
-  // const { id: authorId, name: authorName, image: authorImage } = author;
-  // const { id: opponentId, name: opponentName, image: opponentImage } = opponent;
-  // const { id: communityId, name: communityName, image: communityImage } = community || {};
-  console.log("opponent", opponent)
-  console.log('author',author)
-  
+
   return (
     <div className="border border-gray-300 p-4 rounded-md shadow-md">
       <div className="flex flex-row gap-10">
         <div className="flex flex-col">
+        <div className="text-sm font-medium text-white-900">Team 1: </div>
           <div className="flex items-center space-x-4">
             <div className="flex-shrink-0">
               <Link href={`/profile/${author.id}`} className="relative h-10 w-10">
@@ -68,7 +64,8 @@ function EventCard({
               <div className="text-sm text-gray-500">{formatDateString(createdAt)}</div>
             </div>
           </div>
-          <div className="text-sm font-medium text-white-900">Opponent: </div>
+          
+          <div className="text-sm font-medium text-white-900">Team 2: </div>
           <div className="flex items-center space-x-4">
             <div className="flex-shrink-0">
               <Link href={`/profile/${opponent.id}`} className="relative h-10 w-10">

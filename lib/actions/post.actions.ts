@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { connectToDB } from "../mongoose";
 
 import User from "../models/user.model";
-import Thread from "../models/thread.model";
+import Post from "../models/post.model";
 import Community from "../models/community.model";
 import { fetchUsers, getUserFollowersIds } from "./user.actions";
 
@@ -27,7 +27,7 @@ export async function fetchExplore({
     const followedUsersIds = await getUserFollowersIds(userId, "following");
 
     // Create a query to fetch the posts that have no parent (top-level threads) (a thread that is not a comment/reply).
-    const postsQuery = Thread.find({
+    const postsQuery = Post.find({
       author: { $in: followedUsersIds },
       parentId: { $in: [null, undefined] },
     })
@@ -52,7 +52,7 @@ export async function fetchExplore({
       });
 
     // Count the total number of top-level posts (threads) i.e., threads that are not comments.
-    const totalPostsCount = await Thread.countDocuments({
+    const totalPostsCount = await Post.countDocuments({
       author: { $in: followedUsersIds },
       parentId: { $in: [null, undefined] },
     }); // Get the total count of posts
@@ -77,9 +77,9 @@ export async function isThreadReactedByUser({
   try {
     connectToDB();
 
-    const thread = await Thread.findOne({ _id: threadId });
+    const post = await Post.findOne({ _id: threadId });
 
-    const isReacted: any = thread.reactions.some((reaction: any) =>
+    const isReacted: any = post.reactions.some((reaction: any) =>
       reaction.user.equals(userId)
     );
 
@@ -94,9 +94,9 @@ export async function getReactedUsersByThread(threadId: string) {
   try {
     connectToDB();
 
-    const thread = await Thread.findOne({ _id: threadId });
+    const post = await Post.findOne({ _id: threadId });
 
-    const reactedUsersIds = thread.reactions.map(
+    const reactedUsersIds = post.reactions.map(
       (reaction: any) => reaction.user
     );
 
@@ -119,7 +119,7 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
     const skipAmount = (pageNumber - 1) * pageSize;
 
     // Create a query to fetch the posts that have no parent (top-level threads) (a thread that is not a comment/reply).
-    const postsQuery = Thread.find({ parentId: { $in: [null, undefined] } })
+    const postsQuery = Post.find({ parentId: { $in: [null, undefined] } })
       .sort({ createdAt: "desc" })
       .skip(skipAmount)
       .limit(pageSize)
@@ -141,7 +141,7 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
       });
 
     // Count the total number of top-level posts (threads) i.e., threads that are not comments.
-    const totalPostsCount = await Thread.countDocuments({
+    const totalPostsCount = await Post.countDocuments({
       parentId: { $in: [null, undefined] },
     }); // Get the total count of posts
 
@@ -174,15 +174,15 @@ export async function editThread({
   try {
     connectToDB();
 
-    const thread = await Thread.findById(threadId);
+    const post = await Post.findById(threadId);
 
-    if (!thread) {
+    if (!post) {
       throw new Error("Thread not found");
     }
 
-    thread.text = text;
+    post.text = text;
 
-    await thread.save();
+    await post.save();
 
     revalidatePath(path);
   } catch (error: any) {
@@ -203,7 +203,7 @@ export async function createThread({
       { _id: 1 }
     );
 
-    const createdThread = await Thread.create({
+    const createdThread = await Post.create({
       text,
       author,
       community: communityIdObject, // Assign communityId if provided, or leave it null for personal account
@@ -211,13 +211,13 @@ export async function createThread({
 
     // Update User model
     await User.findByIdAndUpdate(author, {
-      $push: { threads: createdThread._id },
+      $push: { posts: createdThread._id },
     });
 console.log(author)
     if (communityIdObject) {
       // Update Community model
       await Community.findByIdAndUpdate(communityIdObject, {
-        $push: { threads: createdThread._id },
+        $push: { posts: createdThread._id },
       });
     }
 
@@ -228,7 +228,7 @@ console.log(author)
 }
 
 async function fetchAllChildThreads(threadId: string): Promise<any[]> {
-  const childThreads = await Thread.find({ parentId: threadId });
+  const childThreads = await Post.find({ parentId: threadId });
 
   const descendantThreads = [];
   for (const childThread of childThreads) {
@@ -244,7 +244,7 @@ export async function deleteThread(id: string, path: string): Promise<void> {
     connectToDB();
 
     // Find the thread to be deleted (the main thread)
-    const mainThread = await Thread.findById(id).populate("author community");
+    const mainThread = await Post.findById(id).populate("author community");
 
     if (!mainThread) {
       throw new Error("Thread not found");
@@ -256,42 +256,42 @@ export async function deleteThread(id: string, path: string): Promise<void> {
     // Get all descendant thread IDs including the main thread ID and child thread IDs
     const descendantThreadIds = [
       id,
-      ...descendantThreads.map((thread) => thread._id),
+      ...descendantThreads.map((post) => post._id),
     ];
 
     // Extract the authorIds and communityIds to update User and Community models respectively
     const uniqueAuthorIds = new Set(
       [
-        ...descendantThreads.map((thread) => thread.author?._id?.toString()), // Use optional chaining to handle possible undefined values
+        ...descendantThreads.map((post) => post.author?._id?.toString()), // Use optional chaining to handle possible undefined values
         mainThread.author?._id?.toString(),
       ].filter((id) => id !== undefined)
     );
 
     const uniqueCommunityIds = new Set(
       [
-        ...descendantThreads.map((thread) => thread.community?._id?.toString()), // Use optional chaining to handle possible undefined values
+        ...descendantThreads.map((post) => post.community?._id?.toString()), // Use optional chaining to handle possible undefined values
         mainThread.community?._id?.toString(),
       ].filter((id) => id !== undefined)
     );
 
     // Recursively delete child threads and their descendants
-    await Thread.deleteMany({ _id: { $in: descendantThreadIds } });
+    await Post.deleteMany({ _id: { $in: descendantThreadIds } });
 
     // Update User model
     await User.updateMany(
       { _id: { $in: Array.from(uniqueAuthorIds) } },
-      { $pull: { threads: { $in: descendantThreadIds } } }
+      { $pull: { posts: { $in: descendantThreadIds } } }
     );
 
     // Update Community model
     await Community.updateMany(
       { _id: { $in: Array.from(uniqueCommunityIds) } },
-      { $pull: { threads: { $in: descendantThreadIds } } }
+      { $pull: { posts: { $in: descendantThreadIds } } }
     );
 
     revalidatePath(path);
   } catch (error: any) {
-    throw new Error(`Failed to delete thread: ${error.message}`);
+    throw new Error(`Failed to delete post: ${error.message}`);
   }
 }
 
@@ -299,7 +299,7 @@ export async function fetchThreadById(threadId: string) {
   connectToDB();
 
   try {
-    const thread = await Thread.findById(threadId)
+    const post = await Post.findById(threadId)
       .populate({
         path: "author",
         model: User,
@@ -320,7 +320,7 @@ export async function fetchThreadById(threadId: string) {
           },
           {
             path: "children", // Populate the children field within children
-            model: Thread, // The model of the nested children (assuming it's the same "Thread" model)
+            model: Post, // The model of the nested children (assuming it's the same "Thread" model)
             populate: {
               path: "author", // Populate the author field within nested children
               model: User,
@@ -331,7 +331,7 @@ export async function fetchThreadById(threadId: string) {
       })
       .exec();
 
-    return thread;
+    return post;
   } catch (err) {
     console.error("Error while fetching thread:", err);
     throw new Error("Unable to fetch thread");
@@ -350,37 +350,37 @@ export async function addReactToThread({
   try {
     connectToDB();
 
-    const thread = await Thread.findById(threadId);
+    const post = await Post.findById(threadId);
     const user = await User.findOne({ id: userId });
 
-    if (!thread) {
+    if (!post) {
       throw new Error("Thread not found");
     }
 
     const isAlreadyReacted = await isThreadReactedByUser({
-      threadId: thread._id,
+      threadId: post._id,
       userId: user._id,
     });
 
     if (isAlreadyReacted) {
-      thread.reactions.pull({
+      post.reactions.pull({
         user: user._id,
       });
     } else {
-      thread.reactions.push({
+      post.reactions.push({
         user: user._id,
       });
     }
 
-    await thread.save();
+    await post.save();
 
     if (isAlreadyReacted) {
       user.reactions.pull({
-        thread: thread._id,
+        post: post._id,
       });
     } else {
       user.reactions.push({
-        thread: thread._id,
+        post: post._id,
       });
     }
 
@@ -407,14 +407,14 @@ export async function addCommentToThread({
 
   try {
     // Find the original thread by its ID
-    const originalThread = await Thread.findById(threadId);
+    const originalThread = await Post.findById(threadId);
 
     if (!originalThread) {
       throw new Error("Thread not found");
     }
 
     // Create the new comment thread
-    const commentThread = new Thread({
+    const commentThread = new Post({
       text: commentText,
       author: userId,
       parentId: threadId, // Set the parentId to the original thread's ID
@@ -440,13 +440,13 @@ export async function fetchPostReactions({ threadId }: { threadId: string }) {
   try {
     connectToDB();
 
-    const thread = await Thread.findOne({ id: threadId });
+    const post = await Post.findOne({ id: threadId });
 
-    if (!thread) {
-      throw new Error("Thread not found");
+    if (!post) {
+      throw new Error("Post not found");
     }
 
-    const reactionsUsersIds = thread.reactions.map(
+    const reactionsUsersIds = post.reactions.map(
       (reaction: any) => reaction.user
     );
 

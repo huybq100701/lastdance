@@ -32,7 +32,7 @@ export async function editEvent({
   path: string;
 }) {
   try {
-    connectToDB();
+    await connectToDB();
 
     const event = await Event.findById(eventId);
 
@@ -46,11 +46,12 @@ export async function editEvent({
     event.description = description;
     await event.save();
 
-    revalidatePath(path);
+    await revalidatePath(path);
   } catch (error: any) {
     throw new Error(`Failed to edit event: ${error.message}`);
   }
 }
+
 export async function createEvent({
   title,
   location,
@@ -79,7 +80,6 @@ export async function createEvent({
       community: communityIdObject, 
     });
 
-    // Update User model
     await User.findByIdAndUpdate(author, {
       $push: { events: createdEvent._id },
     });
@@ -88,7 +88,6 @@ export async function createEvent({
     });
 
     if (communityIdObject) {
-      // Update Community model
       await Community.findByIdAndUpdate(communityIdObject, {
         $push: { events: createdEvent._id },
       });
@@ -109,12 +108,12 @@ export async function fetchEventById(eventId: string) {
         path: "author",
         model: User,
         select: "_id id name image",
-      }) // Populate the author field with _id and username
+      })
       .populate({
         path: "community",
         model: Community,
         select: "_id id name image",
-      }) // Populate the community field with _id and name
+      }) 
      
       .exec();
 

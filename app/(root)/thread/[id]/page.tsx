@@ -8,7 +8,7 @@ import { fetchUser } from "@/lib/actions/user.actions";
 import {
   fetchThreadById,
   getReactionsData,
-} from "@/lib/actions/thread.actions";
+} from "@/lib/actions/post.actions";
 
 async function Page({ params }: { params: { id: string } }) {
   if (!params.id) return null;
@@ -19,12 +19,12 @@ async function Page({ params }: { params: { id: string } }) {
   const userInfo = await fetchUser(user.id);
   if (!userInfo?.onboarded) redirect("/onboarding");
 
-  const thread = await fetchThreadById(params.id);
+  const post = await fetchThreadById(params.id);
 
   const reactionsData = await getReactionsData({
     userId: userInfo._id,
-    posts: thread.children,
-    parentId: thread._id,
+    posts: post.children,
+    parentId: post._id,
   });
 
   const {
@@ -38,14 +38,14 @@ async function Page({ params }: { params: { id: string } }) {
     <section className="relative">
       <div>
         <ThreadCard
-          id={thread._id}
+          id={post._id}
           currentUserId={user.id}
-          parentId={thread.parentId}
-          content={thread.text}
-          author={thread.author}
-          community={thread.community}
-          createdAt={thread.createdAt}
-          comments={thread.children}
+          parentId={post.parentId}
+          content={post.text}
+          author={post.author}
+          community={post.community}
+          createdAt={post.createdAt}
+          comments={post.children}
           reactions={parentReactions.users}
           reactState={parentReactionState}
         />
@@ -60,7 +60,7 @@ async function Page({ params }: { params: { id: string } }) {
       </div>
 
       <div className="mt-10">
-        {thread.children.map((childItem: any, idx: number) => (
+        {post.children.map((childItem: any, idx: number) => (
           <ThreadCard
             key={childItem._id}
             id={childItem._id}

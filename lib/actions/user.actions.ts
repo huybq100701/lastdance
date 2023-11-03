@@ -4,7 +4,7 @@ import { FilterQuery, SortOrder } from "mongoose";
 import { revalidatePath } from "next/cache";
 
 import Community from "../models/community.model";
-import Thread from "../models/thread.model";
+import Post from "../models/post.model";
 import User from "../models/user.model";
 import Event from "../models/event.model";
 import { connectToDB } from "../mongoose";
@@ -139,10 +139,10 @@ export async function fetchUserPosts(userId: string) {
   try {
     connectToDB();
 
-    // Find all threads authored by the user with the given userId
-    const threads = await User.findOne({ id: userId }).populate({
-      path: "threads",
-      model: Thread,
+    // Find all posts authored by the user with the given userId
+    const posts = await User.findOne({ id: userId }).populate({
+      path: "posts",
+      model: Post,
       populate: [
         {
           path: "community",
@@ -151,7 +151,7 @@ export async function fetchUserPosts(userId: string) {
         },
         {
           path: "children",
-          model: Thread,
+          model: Post,
           populate: {
             path: "author",
             model: User,
@@ -160,9 +160,9 @@ export async function fetchUserPosts(userId: string) {
         },
       ],
     });
-    return threads;
+    return posts;
   } catch (error) {
-    console.error("Error fetching user threads:", error);
+    console.error("Error fetching user posts:", error);
     throw error;
   }
 }
@@ -267,7 +267,7 @@ export async function getActivity(userId: string) {
     connectToDB();
 
     const [userThreads, user] = await Promise.all([
-      Thread.find({ author: userId }),
+      Post.find({ author: userId }),
       User.findOne({ _id: userId }),
     ]);
 
@@ -327,7 +327,7 @@ export async function getActivity(userId: string) {
     );
 
     const [replies, reactionsAndFollowers] = await Promise.all([
-      Thread.find({
+      Post.find({
         _id: { $in: childThreadIds },
         author: { $ne: userId },
       }).populate({

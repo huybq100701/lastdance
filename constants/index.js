@@ -36,7 +36,7 @@ export const sidebarLinks = [{
 ];
 
 export const profileTabs = [{
-    value: "threads",
+    value: "posts",
     label: "Posts",
     icon: "/assets/reply.svg"
   },

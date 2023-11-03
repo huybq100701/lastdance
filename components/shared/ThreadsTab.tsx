@@ -4,14 +4,14 @@ import { fetchCommunityPosts } from "@/lib/actions/community.actions";
 import { fetchUser, fetchUserPosts } from "@/lib/actions/user.actions";
 
 import ThreadCard from "../cards/ThreadCard";
-import { getReactionsData } from "@/lib/actions/thread.actions";
+import { getReactionsData } from "@/lib/actions/post.actions";
 import { currentUser } from "@clerk/nextjs";
 
 interface Result {
   name: string;
   image: string;
   id: string;
-  threads: {
+  posts: {
     _id: string;
     text: string;
     parentId: string | null;
@@ -61,36 +61,36 @@ async function ThreadsTab({ currentUserId, accountId, accountType }: Props) {
 
   const reactionsData = await getReactionsData({
     userId: userInfo._id,
-    posts: result.threads,
+    posts: result.posts,
   });
   console.log(reactionsData)
   const { childrenReactions, childrenReactionState } = reactionsData;
 
   return (
     <section className="mt-9 flex flex-col gap-10">
-      {result.threads.map((thread, idx) => (
+      {result.posts.map((post, idx) => (
         <ThreadCard
-          key={thread._id}
-          id={thread._id}
+          key={post._id}
+          id={post._id}
           currentUserId={currentUserId}
-          parentId={thread.parentId}
-          content={thread.text}
+          parentId={post.parentId}
+          content={post.text}
           author={
             accountType === "User"
               ? { name: result.name, image: result.image, id: result.id }
               : {
-                  name: thread.author.name,
-                  image: thread.author.image,
-                  id: thread.author.id,
+                  name: post.author.name,
+                  image: post.author.image,
+                  id: post.author.id,
                 }
           }
           community={
             accountType === "Community"
               ? { name: result.name, id: result.id, image: result.image }
-              : thread.community
+              : post.community
           }
-          createdAt={thread.createdAt}
-          comments={thread.children}
+          createdAt={post.createdAt}
+          comments={post.children}
           reactions={childrenReactions[idx].users}
           reactState={childrenReactionState[idx]}
         />

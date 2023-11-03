@@ -3,7 +3,7 @@
 import Image from "next/image";
 import React from "react";
 import { usePathname } from "next/navigation";
-import { addReactToThread } from "@/lib/actions/thread.actions";
+import { addReactToThread } from "@/lib/actions/post.actions";
 
 interface Props {
   threadId: string;

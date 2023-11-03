@@ -31,10 +31,10 @@ const communitySchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  threads: [
+  posts: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Thread",
+      ref: "Post",
     },
   ],
   members: [
@@ -51,7 +51,7 @@ communitySchema.virtual("membersCount").get(function () {
 });
 
 communitySchema.virtual("threadsCount").get(function () {
-  return this.threads.length;
+  return this.posts.length;
 });
 
 communitySchema.virtual("followersCount").get(function () {

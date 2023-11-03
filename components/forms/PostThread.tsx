@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
 import { ThreadValidation } from "@/lib/validations/thread";
-import { createThread, editThread } from "@/lib/actions/thread.actions";
+import { createThread, editThread } from "@/lib/actions/post.actions";
 
 interface Props {
   userId: string;
@@ -35,7 +35,7 @@ function PostThread({ userId, threadId, threadText }: Props) {
   const form = useForm<z.infer<typeof ThreadValidation>>({
     resolver: zodResolver(ThreadValidation),
     defaultValues: {
-      thread: threadText || "",
+      post: threadText || "",
       accountId: userId,
     },
   });
@@ -44,12 +44,12 @@ function PostThread({ userId, threadId, threadText }: Props) {
     if (threadId && threadText) {
       await editThread({
         threadId,
-        text: values.thread,
+        text: values.post,
         path: pathname,
       });
     } else {
       await createThread({
-        text: values.thread,
+        text: values.post,
         author: userId,
         communityId: organization ? organization.id : null,
         path: pathname,
@@ -68,7 +68,7 @@ function PostThread({ userId, threadId, threadText }: Props) {
       >
         <FormField
           control={form.control}
-          name="thread"
+          name="post"
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="text-base-semibold text-light-2">

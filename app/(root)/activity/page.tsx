@@ -65,7 +65,7 @@ const ActivityComponent = ({ author, createdAt, activityType, text }: any) => (
     <>
       {activityType === "follow" && "followed you"}
       {activityType === "reaction" && "like your thread"}
-      {text && `replied to your thread: "${truncateString(text, 100)}"`}
+      {text && `replied to your post: "${truncateString(text, 100)}"`}
     </>{" "}
     <span className="text-gray-1">~ {formatDateWithMeasure(createdAt)}</span>
   </p>

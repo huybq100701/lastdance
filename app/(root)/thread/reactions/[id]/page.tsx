@@ -9,7 +9,7 @@ import {
   fetchThreadById,
   getReactedUsersByThread,
   isThreadReactedByUser,
-} from "@/lib/actions/thread.actions";
+} from "@/lib/actions/post.actions";
 import UserCard from "@/components/cards/UserCard";
 
 export const revalidate = 0;
@@ -23,12 +23,12 @@ async function page({ params }: { params: { id: string } }) {
   const userInfo = await fetchUser(user.id);
   if (!userInfo?.onboarded) redirect("/onboarding");
 
-  const thread = await fetchThreadById(params.id);
+  const post = await fetchThreadById(params.id);
 
-  const reactions = await getReactedUsersByThread(thread._id);
+  const reactions = await getReactedUsersByThread(post._id);
 
   const reactionState = await isThreadReactedByUser({
-    threadId: thread._id,
+    threadId: post._id,
     userId: userInfo._id,
   });
 
@@ -36,14 +36,14 @@ async function page({ params }: { params: { id: string } }) {
     <section className="relative">
       <div>
         <ThreadCard
-          id={thread._id}
+          id={post._id}
           currentUserId={user.id}
-          parentId={thread.parentId}
-          content={thread.text}
-          author={thread.author}
-          community={thread.community}
-          createdAt={thread.createdAt}
-          comments={thread.children}
+          parentId={post.parentId}
+          content={post.text}
+          author={post.author}
+          community={post.community}
+          createdAt={post.createdAt}
+          comments={post.children}
           reactions={reactions.users}
           reactState={reactionState}
         />
@@ -59,7 +59,7 @@ async function page({ params }: { params: { id: string } }) {
 
       <div className="mt-10">
         <h1 className="head-text mb-10">People who likes</h1>
-        {thread.reactionsCount === 0 ? (
+        {post.reactionsCount === 0 ? (
           <p className="no-result">No users found</p>
         ) : (
           <>

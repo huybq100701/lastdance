@@ -23,7 +23,7 @@ import { createEvent, editEvent } from "@/lib/actions/event.actions";
 import { useState } from "react";
 
 interface Props {
-  currentUserId: string;
+  userId: string;
   authorId: string;
   opponentId: string;
   eventId?: string;
@@ -33,11 +33,16 @@ interface Props {
   eventDescription?: string;
 }
 
-function PostEvent({ currentUserId, authorId, opponentId, eventId, eventTitle, eventLocation, eventTime,eventDescription }: Props) {
+function PostEvent({ userId, authorId, opponentId, eventId, eventTitle, eventLocation, eventTime,eventDescription }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const { organization } = useOrganization();
+
+  const handleDateChange = (date: Date) => {
+    form.setValue("time", date);
+    setSelectedDate(date);
+  };
 
   const form = useForm<z.infer<typeof EventValidation>>({
     resolver: zodResolver(EventValidation),
@@ -48,6 +53,7 @@ function PostEvent({ currentUserId, authorId, opponentId, eventId, eventTitle, e
       description: eventDescription || "",
       authorId: authorId,
       opponentId: opponentId,
+      accountId: userId,
     },
   });
 
@@ -149,23 +155,17 @@ function PostEvent({ currentUserId, authorId, opponentId, eventId, eventTitle, e
           name="time"
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
-            <FormLabel className="text-base-semibold text-light-2">
-              Time
-            </FormLabel>
-            <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
+              <FormLabel className="text-base-semibold text-light-2">
+                Time
+              </FormLabel>
               <DatePicker
-                {...field}
-                selected={field.value}
-                onChange={(value) => {
-                  const date = new Date(value);
-                  form.setValue("time", date);
-                }}
+                selected={selectedDate}
+                onChange={handleDateChange}
                 showTimeSelect
-                dateFormat="MMMM d, yyyy h:mm aa"
+                dateFormat="Pp"
               />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+              <FormMessage />
+            </FormItem>
           )}
         />
          <FormField

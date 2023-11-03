@@ -44,7 +44,7 @@ async function Page({ params }: { params: { id: string } }) {
       />
 
       <div className="mt-9">
-        <Tabs defaultValue="threads" className="w-full">
+        <Tabs defaultValue="posts" className="w-full">
           <TabsList className="tab">
             {profileTabs.map((tab) => (
               <TabsTrigger key={tab.label} value={tab.value} className="tab">
@@ -80,7 +80,7 @@ async function Page({ params }: { params: { id: string } }) {
             ))}
           </TabsList>
 
-          <TabsContent value="threads" className="w-full text-light-1">
+          <TabsContent value="posts" className="w-full text-light-1">
             {/* @ts-ignore */}{" "}
             {userInfo.threadsCount === 0 ? (
               <div className="mt-9 flex flex-col gap-10">

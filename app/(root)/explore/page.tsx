@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import ThreadCard from "@/components/cards/ThreadCard";
 import Pagination from "@/components/shared/Pagination";
 
-import { fetchExplore, getReactionsData } from "@/lib/actions/thread.actions";
+import { fetchExplore, getReactionsData } from "@/lib/actions/post.actions";
 import { fetchUser } from "@/lib/actions/user.actions";
 
 async function Explore({

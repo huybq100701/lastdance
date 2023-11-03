@@ -11,7 +11,7 @@ const reactionSchema = new mongoose.Schema({
   },
 });
 
-const threadSchema = new mongoose.Schema({
+const postSchema = new mongoose.Schema({
   text: {
     type: String,
     required: true,
@@ -36,19 +36,19 @@ const threadSchema = new mongoose.Schema({
   children: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Thread",
+      ref: "Post",
     },
   ],
 });
 
-threadSchema.virtual("reactionsCount").get(function () {
+postSchema.virtual("reactionsCount").get(function () {
   return this.reactions.length;
 });
 
-threadSchema.virtual("repliesCount").get(function () {
+postSchema.virtual("repliesCount").get(function () {
   return this.children.length;
 });
 
-const Thread = mongoose.models.Thread || mongoose.model("Thread", threadSchema);
+const Post = mongoose.models.Post || mongoose.model("Post", postSchema);
 
-export default Thread;
+export default Post;

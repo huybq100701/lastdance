@@ -23,7 +23,7 @@ import { createEvent, editEvent } from "@/lib/actions/event.actions";
 import { useState } from "react";
 
 interface Props {
-  currentUserId: string;
+  userId: string;
   authorId: string;
   opponentId: string;
   eventId?: string;
@@ -33,7 +33,7 @@ interface Props {
   eventDescription?: string;
 }
 
-function PostEvent({ currentUserId, authorId, opponentId, eventId, eventTitle, eventLocation, eventTime,eventDescription }: Props) {
+function PostEvent({ userId, authorId, opponentId, eventId, eventTitle, eventLocation, eventTime,eventDescription }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -48,6 +48,7 @@ function PostEvent({ currentUserId, authorId, opponentId, eventId, eventTitle, e
       description: eventDescription || "",
       authorId: authorId,
       opponentId: opponentId,
+
     },
   });
 
@@ -144,7 +145,7 @@ function PostEvent({ currentUserId, authorId, opponentId, eventId, eventTitle, e
             </FormItem>
           )}
         />
-           <FormField
+         <FormField
           control={form.control}
           name="time"
           render={({ field }) => (

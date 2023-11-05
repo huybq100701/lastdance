@@ -5,6 +5,5 @@ export const EventValidation = z.object({
   location: z.string().nonempty().min(3, { message: "Minimum 3 characters." }),
   time: z.date(),
   description: z.string(),
-  authorId: z.string(),
-  opponentId: z.string(),
+ 
 });

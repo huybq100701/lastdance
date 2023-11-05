@@ -38,7 +38,7 @@ function PostEvent({ userId, authorId, opponentId, eventId, eventTitle, eventLoc
   const pathname = usePathname();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const { organization } = useOrganization();
-
+  
   const form = useForm<z.infer<typeof EventValidation>>({
     resolver: zodResolver(EventValidation),
     defaultValues: {
@@ -46,38 +46,39 @@ function PostEvent({ userId, authorId, opponentId, eventId, eventTitle, eventLoc
       location: eventLocation || "",
       time : eventTime || new Date(),
       description: eventDescription || "",
-      authorId: authorId,
-      opponentId: opponentId,
-
     },
   });
 
   const onSubmit = async (values: z.infer<typeof EventValidation>) => {
-    if (eventId && eventTitle) {
-      await editEvent({
-        eventId,
-        title: values.title,
-        location: values.location,
-        time: selectedDate,
-        description: values.description,
-        path: pathname,
-      });
-    } else {
-      await createEvent({
-        title: values.title,
-        location: values.location,
-        time: selectedDate,
-        description: values.description,
-        author: authorId,
-        opponent: opponentId,
-        communityId: organization ? organization.id : null,
-        path: pathname,
-      });
-      
+    try {
+      if (eventId && eventTitle) {
+        await editEvent({
+          eventId,
+          title: values.title,
+          location: values.location,
+          time: selectedDate,
+          description: values.description,
+          path: pathname,
+        });
+      } else {
+        await createEvent({
+          title: values.title,
+          location: values.location,
+          time: selectedDate,
+          description: values.description,
+          author: authorId,
+          opponent: opponentId,
+          communityId: organization ? organization.id : null,
+          path: pathname,
+        });
+      }
+  
+      await router.push("/");
+    } catch (error) {
+      console.error("Error:", error);
     }
-
-    router.push("/");
   };
+  
 
   return (
     <Form {...form}>
@@ -154,12 +155,11 @@ function PostEvent({ userId, authorId, opponentId, eventId, eventTitle, eventLoc
               Time
             </FormLabel>
             <FormControl className="no-focus border border-dark-4 bg-dark-3 text-light-1">
-              <DatePicker
-                {...field}
-                selected={field.value}
+            <DatePicker
+                selected={selectedDate}
                 onChange={(value) => {
                   const date = new Date(value);
-                  form.setValue("time", date);
+                  setSelectedDate(date);
                 }}
                 showTimeSelect
                 dateFormat="MMMM d, yyyy h:mm aa"

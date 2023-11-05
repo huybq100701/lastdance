@@ -7,7 +7,7 @@ import PostEvent from "@/components/forms/PostEvent";
 interface Event {
   _id: string;
   title: string;
-  time: string;
+  time: Date;
   location: string;
   description: string;
   author: {
@@ -74,7 +74,7 @@ async function EventTab({ currentUserId, accountId, accountType }: Props) {
           currentUserId={currentUserId}
           title={event.title}
           location={event.location}
-          time={event.time}
+          time={new Date(event.time).toString()}
           description={event.description}
           author={
             event.author

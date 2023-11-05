@@ -46,7 +46,7 @@ export async function editEvent({
     event.description = description;
     await event.save();
 
-    revalidatePath(path);
+    await revalidatePath(path);
   } catch (error: any) {
     throw new Error(`Failed to edit event: ${error.message}`);
   }

@@ -13,7 +13,6 @@ const Page = async ({ params }: { params: { id: string } }) => {
   if (!user) return null;
 
   const userInfo = await fetchUser(user.id);
-  const currentUserInfo = await fetchUser(user.id);
   if (!userInfo?.onboarded) redirect("/onboarding");
 
   const event = await fetchEventById(params.id);
@@ -23,9 +22,6 @@ const Page = async ({ params }: { params: { id: string } }) => {
       <h1 className="head-text">Edit Event</h1>
 
       <PostEvent
-        currentUserId={currentUserInfo._id}
-        authorId={event.author}
-        opponentId={event.opponent}
         eventId={event.id}
         eventTitle={event.title}
         eventLocation={event.location}

@@ -1,8 +1,12 @@
+'use client'
 import Image from "next/image";
 import Link from "next/link";
 import { formatDateString } from "@/lib/utils";
 import EditEvent from "../atoms/EditEvent";
 import DeleteEvent from "../forms/DeleteEvent";
+import { useState } from "react";
+import { approveEvent } from "@/lib/actions/event.actions";
+import ApproveEvent from "../forms/ApproveEvent";
 
 interface Props {
   id: string;
@@ -16,17 +20,18 @@ interface Props {
     name: string;
     image: string;
   };
-  opponent:{
+  opponent: {
     id: string;
     name: string;
     image: string;
-  },
+  };
   community: {
     id: string;
     name: string;
     image: string;
   } | null;
   createdAt: string;
+  approve: boolean;
 }
 
 function EventCard({
@@ -40,15 +45,13 @@ function EventCard({
   opponent,
   community,
   createdAt,
+  approve,
 }: Props) {
-  // const { id: authorId, name: authorName, image: authorImage } = author;
-  // const { id: opponentId, name: opponentName, image: opponentImage } = opponent;
-  // const { id: communityId, name: communityName, image: communityImage } = community || {};
 
   return (
     <div className="border border-gray-300 p-4 rounded-md shadow-md">
       <div className="text-sm font-medium text-white-900">Team 1: </div>
-      <div className="flex flex-row gap-10">   
+      <div className="flex flex-row gap-10">
         <div className="flex flex-col">
           <div className="flex items-center space-x-4">
             <div className="flex-shrink-0">
@@ -66,6 +69,7 @@ function EventCard({
               <div className="text-sm font-medium text-white-900">{author.name}</div>
               <div className="text-sm text-gray-500">{formatDateString(createdAt)}</div>
             </div>
+    
           </div>
           <div className="text-sm font-medium text-white-900">Team 2: </div>
           <div className="flex items-center space-x-4">
@@ -82,12 +86,14 @@ function EventCard({
             </div>
             <div>
               <div className="text-sm font-medium text-white-900">{opponent.name}</div>
-             
             </div>
           </div>
           <div className="mt-2 text-white-700">Title: {title}</div>
           <div className="mt-2 text-white-700">Location: {location}</div>
           <div className="mt-2 text-white-500">Description: {description}</div>
+          <div className="mt-2 text-white-500">
+            Approve: {approve ? "Approved" : "Not Yet"}
+          </div>
           <div className="mt-2 text-gray-500">{time}</div>
           <div className="flex flex-row gap-2 mt-4">
             <DeleteEvent
@@ -102,6 +108,14 @@ function EventCard({
               authorId={author.id}
               opponentId={opponent.id}
             />
+             { !approve && (
+              <ApproveEvent
+                eventId={JSON.stringify(id)}
+                currentUserId={currentUserId}
+                authorId={author.id}
+                opponentId={opponent.id}
+              />
+            )}
           </div>
         </div>
         {community && (

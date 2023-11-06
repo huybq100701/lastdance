@@ -14,16 +14,16 @@ async function Page() {
   if (!userInfo?.onboarded) redirect("/onboarding");
 
   const activity = await getActivity(userInfo._id);
-  // console.log('acti', activity)
+  console.log('acti', activity)
   return (
     <>
       <h1 className="head-text">Activity</h1>
 
-          <section className="mt-10 flex flex-col gap-5">
+      <section className="mt-10 flex flex-col gap-5">
         {activity.length > 0 ? (
           <>
             {activity.map((activity: any) => (
-              <div key={activity.author._id}>
+              <div key={activity._id}>
                 {activity.activityType === "event" ? (
                   <article className="activity-card">
                     <Image
@@ -33,13 +33,25 @@ async function Page() {
                       height={20}
                       className="rounded-full object-cover"
                     />
-                    <ActivityComponent
-                      author={activity.author}
-                      createdAt={activity.createdAt}
-                      activityType={activity.activityType}
-                      eventId={activity.eventId}
-                      text={activity.text}
-                    />
+                    {user.id === activity.opponent.id ? (
+                      <ActivityComponent
+                        author={activity.author}
+                        opponent={activity.opponent}
+                        createdAt={activity.createdAt}
+                        activityType={activity.activityType}
+                        eventId={activity.eventId}
+                        text={activity.text}
+                      />
+                    ) : (
+                      <ApproveComponent
+                        author={activity.author}
+                        opponent={activity.opponent}
+                        activityType={activity.activityType}
+                        text={activity.text}
+                        title={activity.title}
+                        approve={activity.approve}
+                      />
+                    )}
                   </article>
                 ) : (
                   <Link
@@ -56,13 +68,25 @@ async function Page() {
                         height={20}
                         className="rounded-full object-cover"
                       />
-                      <ActivityComponent
-                        author={activity.author}
-                        createdAt={activity.createdAt}
-                        parentId={activity.parentId}
-                        activityType={activity.activityType}
-                        text={activity.text}
-                      />
+                      {user.id === activity.author.id ? (
+                        <ApproveComponent
+                          author={activity.author}
+                          opponent={activity.opponent}
+                          activityType={activity.activityType}
+                          text={activity.text}
+                          title={activity.title}
+                          approve={activity.approve}
+                        />
+                      ) : (
+                        <ActivityComponent
+                          author={activity.author}
+                          opponent={activity.opponent}
+                          createdAt={activity.createdAt}
+                          parentId={activity.parentId}
+                          activityType={activity.activityType}
+                          text={activity.text}
+                        />
+                      )}
                     </article>
                   </Link>
                 )}
@@ -73,24 +97,41 @@ async function Page() {
           <p className="!text-base-regular text-light-3">No activity yet</p>
         )}
       </section>
-
     </>
   );
 }
 
-const ActivityComponent = ({ author, createdAt, activityType, text }: any) => (
+const ActivityComponent = ({ author, opponent, createdAt, activityType, text }: any) => (
   <p className="!text-small-regular text-light-1">
     <Link key={author._id} href={`/profile/${author.id}`}>
       <span className="text-primary-500">{author.name}</span>
     </Link>{" "}
     <>
-      {activityType === "follow" && "followed you"}
-      {activityType === "reaction" && "liked your thread"}
-      {activityType === "event" && "created an event"}
+      {activityType === "follow" && `followed you`}
+      {activityType === "reaction" && `liked your thread`}
+      {activityType === "event" && `created an event`}
       {text && `replied to your thread: "${truncateString(text, 100)}"`}
-      
     </>{" "}
     <span className="text-gray-1">~ {formatDateWithMeasure(createdAt)}</span>
+  </p>
+);
+
+const ApproveComponent = ({ author, opponent, activityType, text, title, approve }: any) => (
+  <p className="!text-small-regular text-light-1">
+    <Link key={author._id} href={`/profile/${author.id}`}>
+      <span className="text-primary-500">{author.name}</span>
+    </Link>{" "}
+    <>
+      {activityType === "approve" && (
+        <>
+          {approve ? (
+            `approved an event: "${truncateString(title, 100)}"`
+          ) : (
+            `not approved or pending for event: "${truncateString(title, 100)}"`
+          )}
+        </>
+      )}
+    </>{" "}
   </p>
 );
 

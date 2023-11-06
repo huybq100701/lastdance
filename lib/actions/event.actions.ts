@@ -158,3 +158,22 @@ export async function deleteEvent(id: string, path: string): Promise<void> {
     throw new Error(`Failed to delete event: ${error.message}`);
   }
 }
+
+export async function approveEvent(eventId: string, path: string ): Promise<void> {
+  try {
+    connectToDB();
+
+    const event = await Event.findById(eventId);
+
+    if (!event) {
+      throw new Error("Event not found");
+    }
+
+    event.approve = true;
+    await event.save();
+
+    revalidatePath(path);
+  } catch (error: any) {
+    throw new Error(`Failed to approve event: ${error.message}`);
+  }
+}

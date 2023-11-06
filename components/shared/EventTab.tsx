@@ -26,6 +26,7 @@ interface Event {
     image: string;
   } | null;
   createdAt: string;
+  approve: boolean;
 }
 
 interface Props {
@@ -92,6 +93,7 @@ async function EventTab({ currentUserId, accountId, accountType }: Props) {
               : event.community
           }
           createdAt={event.createdAt}
+          approve={event.approve}
         />
       ))}
     </section>

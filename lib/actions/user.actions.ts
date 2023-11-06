@@ -333,7 +333,7 @@ export async function getActivity(userId: string) {
       }).populate({
         path: "author",
         model: User,
-        select: "name username image id _id",
+        select: "name username image _id",
       }),
       reactionsData.concat(followersData),
     ]);
@@ -348,12 +348,44 @@ export async function getActivity(userId: string) {
           _id: user._id,
           id: user.id,
         },
+        opponent: {
+          name: user.name,
+          username: user.username,
+          image: user.image,
+          _id: user._id,
+          id: user.id,
+        },
         createdAt: event.createdAt,
         activityType: "event",
       };
-    }); 
-
-    const activity = [...replies, ...reactionsAndFollowers, ...eventActivity]
+    });
+    
+    const approveData = await Event.find({ userId: userId });
+    
+    const approveActivity = approveData.map((event) => {
+      return {
+        author: {
+          name: user.name,
+          username: user.username,
+          image: user.image,
+          _id: user._id,
+          id: user.id,
+        },
+        opponent: {
+          name: user.name,
+          username: user.username,
+          image: user.image,
+          _id: user._id,
+          id: user.id,
+        },
+        createdAt: event.createdAt,
+        title: event.title,
+        approve: event.approve,
+        activityType: "approve",
+      };
+    });
+    
+    const activity = [...replies, ...reactionsAndFollowers, ...eventActivity , ...approveActivity]
       .filter((i) => i !== null)
       .sort((a, b) => b?.createdAt - a?.createdAt);
 
@@ -362,9 +394,8 @@ export async function getActivity(userId: string) {
     console.error("Error fetching activity: ", error);
     throw error;
   }
-
-  
 }
+
 
 export async function fetchUserEvents(authorId: string) {
   try {

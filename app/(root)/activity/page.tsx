@@ -14,61 +14,66 @@ async function Page() {
   if (!userInfo?.onboarded) redirect("/onboarding");
 
   const activity = await getActivity(userInfo._id);
+  // console.log('acti', activity)
   return (
     <>
       <h1 className="head-text">Activity</h1>
 
-      <section className="mt-10 flex flex-col gap-5">
+          <section className="mt-10 flex flex-col gap-5">
         {activity.length > 0 ? (
           <>
             {activity.map((activity: any) => (
-             <div key={activity.author._id} suppressHydrationWarning={true}>
-             {activity.activityType === "event" ? (
-               <article className="activity-card">
-                 <Image
-                   src={activity.author.image}
-                   alt="user_logo"
-                   width={20}
-                   height={20}
-                   className="rounded-full object-cover"
-                 />
-                 <ActivityComponent
-                   author={activity.author}
-                   createdAt={activity.createdAt}
-                   activityType={activity.activityType}
-                   text={activity.text}
-                 />
-               </article>
-             ) : (
-               <Link
-                 href={`/profile/${activity.author.id}`}
-               >
-                 <article className="activity-card">
-                   <Image
-                     src={activity.author.image}
-                     alt="user_logo"
-                     width={20}
-                     height={20}
-                     className="rounded-full object-cover"
-                   />
-                   <ActivityComponent
-                     author={activity.author}
-                     createdAt={activity.createdAt}
-                     parentId={activity.parentId}
-                     eventId={activity.eventId}
-                     activityType={activity.activityType}
-                     text={activity.text}
-                   />
-                 </article>
-               </Link>
-             )}
-           </div>
+              <div key={activity.author._id}>
+                {activity.activityType === "event" ? (
+                  <article className="activity-card">
+                    <Image
+                      src={activity.author.image}
+                      alt="user_logo"
+                      width={20}
+                      height={20}
+                      className="rounded-full object-cover"
+                    />
+                    <ActivityComponent
+                      author={activity.author}
+                      createdAt={activity.createdAt}
+                      activityType={activity.activityType}
+                      eventId={activity.eventId}
+                      text={activity.text}
+                    />
+                  </article>
+                ) : (
+                  <Link
+                    href={`${
+                      (activity.parentId && `/thread/${activity.parentId}`) ||
+                      `/profile/${activity.author.id}`
+                    }`}
+                  >
+                    <article className="activity-card">
+                      <Image
+                        src={activity.author.image}
+                        alt="user_logo"
+                        width={20}
+                        height={20}
+                        className="rounded-full object-cover"
+                      />
+                      <ActivityComponent
+                        author={activity.author}
+                        createdAt={activity.createdAt}
+                        parentId={activity.parentId}
+                        activityType={activity.activityType}
+                        text={activity.text}
+                      />
+                    </article>
+                  </Link>
+                )}
+              </div>
             ))}
           </>
         ) : (
           <p className="!text-base-regular text-light-3">No activity yet</p>
         )}
       </section>
+
     </>
   );
 }

@@ -333,7 +333,7 @@ export async function getActivity(userId: string) {
       }).populate({
         path: "author",
         model: User,
-        select: "name username image _id",
+        select: "name username image id _id",
       }),
       reactionsData.concat(followersData),
     ]);
@@ -397,3 +397,4 @@ export async function fetchUserEvents(authorId: string) {
     throw error;
   }
 }
+

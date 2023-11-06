@@ -14,7 +14,6 @@ async function Page() {
   if (!userInfo?.onboarded) redirect("/onboarding");
 
   const activity = await getActivity(userInfo._id);
-
   return (
     <>
       <h1 className="head-text">Activity</h1>
@@ -23,30 +22,47 @@ async function Page() {
         {activity.length > 0 ? (
           <>
             {activity.map((activity: any) => (
-              <Link
-                key={activity.author._id}
-                href={`${
-                  (activity.parentId && `/thread/${activity.parentId}`) ||
-                  `/profile/${activity.author.id}`
-                }`}
-              >
-                <article className="activity-card">
-                  <Image
-                    src={activity.author.image}
-                    alt="user_logo"
-                    width={20}
-                    height={20}
-                    className="rounded-full object-cover"
-                  />
-                  <ActivityComponent
-                    author={activity.author}
-                    createdAt={activity.createdAt}
-                    parentId={activity.parentId}
-                    activityType={activity.activityType}
-                    text={activity.text}
-                  />
-                </article>
-              </Link>
+             <div key={activity.author._id} suppressHydrationWarning={true}>
+             {activity.activityType === "event" ? (
+               <article className="activity-card">
+                 <Image
+                   src={activity.author.image}
+                   alt="user_logo"
+                   width={20}
+                   height={20}
+                   className="rounded-full object-cover"
+                 />
+                 <ActivityComponent
+                   author={activity.author}
+                   createdAt={activity.createdAt}
+                   activityType={activity.activityType}
+                   text={activity.text}
+                 />
+               </article>
+             ) : (
+               <Link
+                 href={`/profile/${activity.author.id}`}
+               >
+                 <article className="activity-card">
+                   <Image
+                     src={activity.author.image}
+                     alt="user_logo"
+                     width={20}
+                     height={20}
+                     className="rounded-full object-cover"
+                   />
+                   <ActivityComponent
+                     author={activity.author}
+                     createdAt={activity.createdAt}
+                     parentId={activity.parentId}
+                     eventId={activity.eventId}
+                     activityType={activity.activityType}
+                     text={activity.text}
+                   />
+                 </article>
+               </Link>
+             )}
+           </div>
             ))}
           </>
         ) : (
@@ -64,8 +80,10 @@ const ActivityComponent = ({ author, createdAt, activityType, text }: any) => (
     </Link>{" "}
     <>
       {activityType === "follow" && "followed you"}
-      {activityType === "reaction" && "like your thread"}
+      {activityType === "reaction" && "liked your thread"}
+      {activityType === "event" && "created an event"}
       {text && `replied to your thread: "${truncateString(text, 100)}"`}
+      
     </>{" "}
     <span className="text-gray-1">~ {formatDateWithMeasure(createdAt)}</span>
   </p>

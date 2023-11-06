@@ -338,7 +338,22 @@ export async function getActivity(userId: string) {
       reactionsData.concat(followersData),
     ]);
 
-    const activity = [...replies, ...reactionsAndFollowers]
+    const userEvents = await Event.find({ author: userId });
+    const eventActivity = userEvents.map((event) => {
+      return {
+        author: {
+          name: user.name,
+          username: user.username,
+          image: user.image,
+          _id: user._id,
+          id: user.id,
+        },
+        createdAt: event.createdAt,
+        activityType: "event",
+      };
+    }); 
+
+    const activity = [...replies, ...reactionsAndFollowers, ...eventActivity]
       .filter((i) => i !== null)
       .sort((a, b) => b?.createdAt - a?.createdAt);
 
@@ -347,6 +362,8 @@ export async function getActivity(userId: string) {
     console.error("Error fetching activity: ", error);
     throw error;
   }
+
+  
 }
 
 export async function fetchUserEvents(authorId: string) {

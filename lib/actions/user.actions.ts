@@ -333,27 +333,28 @@ export async function getActivity(userId: string) {
       }).populate({
         path: "author",
         model: User,
-        select: "name username image _id",
+        select: "name username image id _id",
       }),
       reactionsData.concat(followersData),
     ]);
-
-    const userEvents = await Event.find({ author: userId });
-    const eventActivity = userEvents.map((event) => {
+    const userEvents = await Event.find({ userId: userId });
+    const eventActivity = userEvents.map(async (event) => {
+      const author = await User.findOne({ _id: event.author });
+      const opponent = await User.findOne({ _id: event.opponent });
       return {
         author: {
-          name: user.name,
-          username: user.username,
-          image: user.image,
-          _id: user._id,
-          id: user.id,
+          name: author.name,
+          username: author.username,
+          image: author.image,
+          _id: author._id,
+          id: author.id,
         },
         opponent: {
-          name: user.name,
-          username: user.username,
-          image: user.image,
-          _id: user._id,
-          id: user.id,
+          name: opponent.name,
+          username: opponent.username,
+          image: opponent.image,
+          _id: opponent._id,
+          id: opponent.id,
         },
         createdAt: event.createdAt,
         activityType: "event",
@@ -361,22 +362,23 @@ export async function getActivity(userId: string) {
     });
     
     const approveData = await Event.find({ userId: userId });
-    
-    const approveActivity = approveData.map((event) => {
+    const approveActivity = approveData.map(async (event) => {
+      const author = await User.findOne({ _id: event.author });
+      const opponent = await User.findOne({ _id: event.opponent });
       return {
         author: {
-          name: user.name,
-          username: user.username,
-          image: user.image,
-          _id: user._id,
-          id: user.id,
+          name: author.name,
+          username: author.username,
+          image: author.image,
+          _id: author._id,
+          id: author.id,
         },
         opponent: {
-          name: user.name,
-          username: user.username,
-          image: user.image,
-          _id: user._id,
-          id: user.id,
+          name: opponent.name,
+          username: opponent.username,
+          image: opponent.image,
+          _id: opponent._id,
+          id: opponent.id,
         },
         createdAt: event.createdAt,
         title: event.title,
@@ -385,11 +387,14 @@ export async function getActivity(userId: string) {
       };
     });
     
-    const activity = [...replies, ...reactionsAndFollowers, ...eventActivity , ...approveActivity]
+    const activityPromises = await Promise.all([...replies, ...reactionsAndFollowers, ...eventActivity, ...approveActivity]);
+    
+    const activity = activityPromises
       .filter((i) => i !== null)
       .sort((a, b) => b?.createdAt - a?.createdAt);
-
+    
     return activity;
+
   } catch (error) {
     console.error("Error fetching activity: ", error);
     throw error;

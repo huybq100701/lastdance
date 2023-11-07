@@ -14,7 +14,8 @@ async function Page() {
   if (!userInfo?.onboarded) redirect("/onboarding");
 
   const activity = await getActivity(userInfo._id);
-  console.log('acti', activity)
+  console.log('acti', activity);
+
   return (
     <>
       <h1 className="head-text">Activity</h1>
@@ -25,34 +26,19 @@ async function Page() {
             {activity.map((activity: any) => (
               <div key={activity._id}>
                 {activity.activityType === "event" ? (
-                  <article className="activity-card">
-                    <Image
-                      src={activity.author.image}
-                      alt="user_logo"
-                      width={20}
-                      height={20}
-                      className="rounded-full object-cover"
-                    />
-                    {user.id === activity.opponent.id ? (
-                      <ActivityComponent
-                        author={activity.author}
-                        opponent={activity.opponent}
-                        createdAt={activity.createdAt}
-                        activityType={activity.activityType}
-                        eventId={activity.eventId}
-                        text={activity.text}
-                      />
-                    ) : (
-                      <ApproveComponent
-                        author={activity.author}
-                        opponent={activity.opponent}
-                        activityType={activity.activityType}
-                        text={activity.text}
-                        title={activity.title}
-                        approve={activity.approve}
-                      />
+                  <>
+                    {user.id === activity.opponent.id && (
+                      <article className="activity-card">
+                        <EventComponent
+                          author={activity.author}
+                          opponent={activity.opponent}
+                          createdAt={activity.createdAt}
+                          activityType={activity.activityType}
+                          text={activity.text}
+                        />
+                      </article>
                     )}
-                  </article>
+                  </>
                 ) : (
                   <Link
                     href={`${
@@ -61,13 +47,6 @@ async function Page() {
                     }`}
                   >
                     <article className="activity-card">
-                      <Image
-                        src={activity.author.image}
-                        alt="user_logo"
-                        width={20}
-                        height={20}
-                        className="rounded-full object-cover"
-                      />
                       {user.id === activity.author.id ? (
                         <ApproveComponent
                           author={activity.author}
@@ -102,36 +81,76 @@ async function Page() {
 }
 
 const ActivityComponent = ({ author, opponent, createdAt, activityType, text }: any) => (
-  <p className="!text-small-regular text-light-1">
-    <Link key={author._id} href={`/profile/${author.id}`}>
-      <span className="text-primary-500">{author.name}</span>
+  <p className="!text-small-regular text-light-1 flex items-center">
+    <Link className="flex items-center" key={author._id} href={`/profile/${author.id}`}>
+      {author.image && (
+        <Image
+          src={author.image}
+          alt="user_logo"
+          width={20}
+          height={20}
+          className="rounded-full object-cover"
+        />
+      )}
+      {author.name && <span className="text-primary-500 mx-2">{author.name}</span>}
     </Link>{" "}
     <>
       {activityType === "follow" && `followed you`}
       {activityType === "reaction" && `liked your thread`}
-      {activityType === "event" && `created an event`}
       {text && `replied to your thread: "${truncateString(text, 100)}"`}
-    </>{" "}
+    </>
     <span className="text-gray-1">~ {formatDateWithMeasure(createdAt)}</span>
   </p>
 );
 
-const ApproveComponent = ({ author, opponent, activityType, text, title, approve }: any) => (
-  <p className="!text-small-regular text-light-1">
-    <Link key={author._id} href={`/profile/${author.id}`}>
-      <span className="text-primary-500">{author.name}</span>
+const EventComponent = ({ author, createdAt, activityType }: any) => (
+  <p className="!text-small-regular text-light-1 flex items-center">
+    <Link key={author._id} href={`/profile/${author.id}`} className="flex items-center">
+      <Image
+        src={author.image}
+        alt="user_logo"
+        width={20}
+        height={20}
+        className="rounded-full object-cover"
+      />
+      <span className="text-primary-500 mx-2">{author.name}</span>
     </Link>{" "}
+    <>
+      {activityType === "event" && `created an event`}
+    </>
+    <span className="text-gray-1">~ {formatDateWithMeasure(createdAt)}</span>
+  </p>
+);
+
+const ApproveComponent = ({ opponent, activityType, title, approve }: any) => (
+  <p className="!text-small-regular text-light-1 flex items-center">
+    <div>
+      <Link key={opponent._id} href={`/profile/${opponent.id}`} className="flex items-center">
+        <Image
+          src={opponent.image}
+          alt="user_logo"
+          width={20}
+          height={20}
+          className="rounded-full object-cover"
+        />
+        <span className="text-primary-500 mx-2">{opponent.name}</span>
+      </Link>
+    </div>{" "}
     <>
       {activityType === "approve" && (
         <>
           {approve ? (
-            `approved an event: "${truncateString(title, 100)}"`
+            <span>
+              approved an event: "{truncateString(title, 100)}"
+            </span>
           ) : (
-            `not approved or pending for event: "${truncateString(title, 100)}"`
+            <span>
+              not approved or pending for event: "{truncateString(title, 100)}"
+            </span>
           )}
         </>
       )}
-    </>{" "}
+    </>
   </p>
 );
 

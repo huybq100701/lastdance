@@ -69,3 +69,4 @@ async function Explore({
 }
 
 export default Explore;
+export const runtime = 'edge';

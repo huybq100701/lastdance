@@ -180,3 +180,4 @@ const ApproveComponent = ({userInfo, author, opponent, activityType, title, appr
 
 
 export default Page;
+export const runtime = 'edge';

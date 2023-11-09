@@ -356,6 +356,7 @@ export async function getActivity(userId: string) {
           _id: opponent._id,
           id: opponent.id,
         },
+        title: event.title,
         createdAt: event.createdAt,
         activityType: "event",
       };

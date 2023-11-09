@@ -24,9 +24,9 @@ export const sidebarLinks = [{
     label: "Create Post",
   },
   // {
-  //   imgURL: "/assets/community.svg",
-  //   route: "/communities",
-  //   label: "Communities",
+  //   imgURL: "/assets/calendar.svg",
+  //   route: "/calendar",
+  //   label: "Calendar",
   // },
   {
     imgURL: "/assets/user.svg",

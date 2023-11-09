@@ -63,4 +63,3 @@ const LeftSidebar = () => {
 };
 
 export default LeftSidebar;
-export const runtime = 'edge';

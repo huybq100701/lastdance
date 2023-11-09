@@ -162,4 +162,3 @@ async function Page({ params }: { params: { id: string } }) {
   );
 }
 export default Page;
-export const runtime = 'edge';

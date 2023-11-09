@@ -33,4 +33,3 @@ const Page = async ({ params }: { params: { id: string } }) => {
 };
 
 export default Page;
-export const runtime = 'edge';

@@ -9,7 +9,7 @@ import {
   fetchThreadById,
   getReactionsData,
 } from "@/lib/actions/thread.actions";
-export const runtime = 'edge';
+
 async function Page({ params }: { params: { id: string } }) {
   if (!params.id) return null;
 

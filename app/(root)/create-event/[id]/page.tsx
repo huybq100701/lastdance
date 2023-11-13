@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import PostEvent from "@/components/forms/PostEvent";
 import { fetchUser } from "@/lib/actions/user.actions";
-export const runtime = 'edge';
+
 async function Page({ params }: { params: { id: string } }) {
   const user = await currentUser();
   if (!user) return null;

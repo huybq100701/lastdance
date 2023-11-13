@@ -11,7 +11,7 @@ import {
   isThreadReactedByUser,
 } from "@/lib/actions/thread.actions";
 import UserCard from "@/components/cards/UserCard";
-export const runtime = 'edge';
+
 export const revalidate = 0;
 
 async function page({ params }: { params: { id: string } }) {

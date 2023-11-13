@@ -6,7 +6,7 @@ import Pagination from "@/components/shared/Pagination";
 
 import { fetchExplore, getReactionsData } from "@/lib/actions/thread.actions";
 import { fetchUser } from "@/lib/actions/user.actions";
-
+export const runtime = 'edge';
 async function Explore({
   searchParams,
 }: {

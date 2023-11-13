@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description: "Last Dance",
 };
 // connectToDB();
-
+export const runtime = 'edge';
 export default function RootLayout({
   children,
 }: {

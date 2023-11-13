@@ -6,7 +6,7 @@ import Searchbar from "@/components/shared/Searchbar";
 import Pagination from "@/components/shared/Pagination";
 
 import { fetchUser, fetchUsers } from "@/lib/actions/user.actions";
-
+export const runtime = 'edge';
 async function Page({
   searchParams,
 }: {

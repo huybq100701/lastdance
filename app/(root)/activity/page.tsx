@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 import { fetchUser, getActivity } from "@/lib/actions/user.actions";
 import { truncateString, formatDateWithMeasure } from "@/lib/utils";
-
+export const runtime = 'edge';
 async function Page() {
   const user = await currentUser();
   if (!user) return null;

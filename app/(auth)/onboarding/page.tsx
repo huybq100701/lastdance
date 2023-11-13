@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { fetchUser } from "@/lib/actions/user.actions";
 import AccountProfile from "@/components/forms/AccountProfile";
-export const runtime = 'edge';
+// export const runtime = 'edge';
 async function Page() {
   const user = await currentUser();
   if (!user) return null;

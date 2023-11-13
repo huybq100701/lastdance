@@ -53,6 +53,7 @@
   },
   "devDependencies": {
     "@types/react-big-calendar": "^1.6.5",
-    "@types/react-datepicker": "^4.19.1"
+    "@types/react-datepicker": "^4.19.1",
+    "encoding": "^0.1.13"
   }
 }

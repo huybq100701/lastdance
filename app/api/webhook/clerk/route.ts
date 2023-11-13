@@ -34,9 +34,7 @@ type Event = {
   type: EventType;
 };
 
-export const config ={
-  runtime: "experimental-edge",
-};
+export const runtime = "experimental-edge"
 
 export const POST = async (request: Request) => {
   const payload = await request.json();

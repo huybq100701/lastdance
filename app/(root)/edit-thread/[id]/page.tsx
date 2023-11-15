@@ -28,5 +28,5 @@ const Page = async ({ params }: { params: { id: string } }) => {
     </>
   );
 };
-export const runtime = "edge";
+
 export default Page;

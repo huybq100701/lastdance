@@ -79,5 +79,5 @@ async function page({ params }: { params: { id: string } }) {
     </section>
   );
 }
-export const runtime = "edge";
+
 export default page;

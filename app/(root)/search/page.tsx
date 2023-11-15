@@ -59,5 +59,5 @@ async function Page({
     </section>
   );
 }
-
+export const runtime = "edge";
 export default Page;

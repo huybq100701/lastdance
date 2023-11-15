@@ -176,7 +176,5 @@ const ApproveComponent = ({userInfo, author, opponent, activityType, title, appr
   </div>
 );
 
-
-
-
+export const runtime = "edge";
 export default Page;

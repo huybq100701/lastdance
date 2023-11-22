@@ -1,73 +1,105 @@
 'use client'
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { fetchTeamMembers, addTeamMember } from "@/lib/actions/event.actions";
 
 interface ViewEventProps {
   eventId: string;
   currentUserId: string;
   authorId: string;
   opponentId: string;
+  team1: string;
+  team2: string;
 }
 
-function ViewEvent({ eventId, currentUserId, authorId, opponentId }: ViewEventProps) {
+
+function ViewEvent({ eventId, currentUserId, authorId, opponentId, team1, team2 }: ViewEventProps) {
   const [team1Members, setTeam1Members] = useState<string[]>([]);
   const [team2Members, setTeam2Members] = useState<string[]>([]);
+  const [userTeam, setUserTeam] = useState<string | null>(null);
 
-  // You can fetch team members based on authorId and opponentId
-  // For example, make an API call to get members for each team
-  // Assume fetchTeamMembers is an async function that fetches team members by userId
-  const fetchTeamMembers = async (teamId: string): Promise<string[]> => {
-    // Implementation to fetch team members based on teamId
-    // This is just a placeholder, replace it with your actual implementation
-    // For example, you might fetch members from a database
-    return ["Member1", "Member2", "Member3"];
-  };
-
-  // useEffect to fetch team members when the component mounts
   useEffect(() => {
     const fetchMembers = async () => {
-      const team1Members = await fetchTeamMembers(authorId);
-      const team2Members = await fetchTeamMembers(opponentId);
+      try {
+        const fetchedTeam1Members = await fetchTeamMembers(team1);
+        const fetchedTeam2Members = await fetchTeamMembers(team2);
+ 
+        setTeam1Members(fetchedTeam1Members || []); // Handle potential null or undefined
+        setTeam2Members(fetchedTeam2Members || []); // Handle potential null or undefined
+      
+        // Check if the user has already joined a team
+        if (fetchedTeam1Members && fetchedTeam1Members.includes(currentUserId)) {
+          setUserTeam("team1");
+        } else if (fetchedTeam2Members && fetchedTeam2Members.includes(currentUserId)) {
+          setUserTeam("team2");
+        }
+      } catch (error) {
+        console.error("Error fetching team members:", error.message);
+      }
 
-      setTeam1Members(team1Members);
-      setTeam2Members(team2Members);
     };
 
     fetchMembers();
-  }, [authorId, opponentId]);
+  }, [team1, team2, currentUserId]);
 
-  const handleJoinTeam1 = () => {
-    // Handle logic for joining Team 1
-    console.log("Join Team 1");
+  const handleJoinTeam1 = async () => {
+    try {
+      if (userTeam !== "team1" && team1Members.length < 7) {
+        await addTeamMember(eventId, "team1", currentUserId);
+        const updatedTeam1Members = await fetchTeamMembers(team1);
+        setTeam1Members(updatedTeam1Members || []); 
+        setUserTeam("team1");
+      } else {
+        console.log("Cannot join Team 1");
+      }
+    } catch (error) {
+    }
   };
 
-  const handleJoinTeam2 = () => {
-    // Handle logic for joining Team 2
-    console.log("Join Team 2");
+  const handleJoinTeam2 = async () => {
+    try {
+      if (userTeam !== "team2" && team2Members.length < 7) {
+        await addTeamMember(eventId, "team2", currentUserId);
+        const updatedTeam2Members = await fetchTeamMembers(team2);
+        setTeam2Members(updatedTeam2Members || []); 
+        setUserTeam("team2");
+      } else {
+        console.log("Cannot join Team 2");
+      }
+    } catch (error) {
+      console.error("Failed to join Team 2:", error.message);
+    }
   };
 
   return (
-    <div>
-      <h2>Event Details</h2>
-      {/* Render other event details as needed */}
-      
-      <div>
-        <h3>Team 1</h3>
-        <ul>
-          {team1Members.map((member, index) => (
-            <li key={index}>{member}</li>
-          ))}
-        </ul>
-        <button onClick={handleJoinTeam1}>Join Team 1</button>
-      </div>
+    <div className="border border-gray-300 p-4 my-10 rounded-md shadow-md">
+      <h2 className="text-lg font-semibold mb-4 text-white">Event Details</h2>
 
-      <div>
-        <h3>Team 2</h3>
-        <ul>
-          {team2Members.map((member, index) => (
-            <li key={index}>{member}</li>
-          ))}
-        </ul>
-        <button onClick={handleJoinTeam2}>Join Team 2</button>
+      {/* Team 1 */}
+      <div className="mb-6 grid grid-cols-2">
+        <div>
+          <h3 className="text-xl font-semibold mb-2 text-white">Team 1</h3>
+          <ul className="list-none pl-0">
+            {team1Members.map((member, index) => (
+              <li key={index} className="mb-2 text-white">{member}</li>
+            ))}
+          </ul>
+          {userTeam !== "team1" && (
+            <button onClick={handleJoinTeam1} className="bg-lime-500 text-white px-4 py-2 rounded hover:bg-green-600">Join Team 1</button>
+          )}
+        </div>
+
+        {/* Team 2 */}
+        <div> 
+          <h3 className="text-xl font-semibold mb-2 text-white">Team 2</h3>
+          <ul className="list-none pl-0">
+            {team2Members.map((member, index) => (
+              <li key={index} className="mb-2 text-white">{member}</li>
+            ))}
+          </ul>
+          {userTeam !== "team2" && (
+            <button onClick={handleJoinTeam2} className="bg-lime-500 text-white px-4 py-2 rounded hover:bg-green-600">Join Team 2</button>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -76,6 +76,8 @@ export async function createEvent({
       description,
       author,
       opponent,
+      team1: { name: "Team 1", members: [author] },
+      team2: { name: "Team 2", members: [opponent] },
       community: communityIdObject, 
     });
 
@@ -213,5 +215,74 @@ export async function fetchEvents(pageNumber = 1, pageSize = 5) {
   } catch (error) {
 
  
+  }
+}
+
+export async function fetchTeamMembers(eventId: string, team: "team1" | "team2"): Promise<string[]> {
+  try {
+    // Connect to the database
+    await connectToDB();
+
+    // Fetch the event by eventId
+    const event = await Event.findById(eventId)
+      .populate({
+        path: team === "team1" ? "team1.members" : "team2.members",
+        model: User,
+        select: "_id name",
+      })
+      .exec();
+
+    // Check if the team exists
+    if (!event) {
+      throw new Error("Event not found");
+    }
+
+    // Determine the team members based on the selected team
+    const teamMembers = team === "team1" ? event.team1.members : event.team2.members;
+
+    // Extract member names
+    const memberNames = teamMembers.map((member) => member.name);
+
+    return memberNames;
+  } catch (error: any) {
+  }
+}
+
+
+// Function to add a member to a specific team within an event
+export async function addTeamMember(eventId: string, team: "team1" | "team2", memberId: string): Promise<void> {
+  try {
+    // Connect to the database
+    await connectToDB();
+
+    // Fetch the event by eventId
+    const event = await Event.findById(eventId)
+      .populate({
+        path: team === "team1" ? "author" : "opponent",
+        model: User,
+        select: "_id",
+      })
+      .exec();
+
+    // Check if the team exists
+    if (!event) {
+      throw new Error("Event not found");
+    }
+
+    // Determine the team to update based on the selected team
+    const teamToUpdate = team === "team1" ? event.author : event.opponent;
+
+    // Check if the member already exists in the team
+    if (teamToUpdate.find((member) => member._id.toString() === memberId)) {
+      throw new Error("Member already exists in the team");
+    }
+
+    // Add the new member to the team
+    teamToUpdate.push(memberId);
+
+    // Save the changes to the event
+    await event.save();
+  } catch (error: any) {
+    throw new Error(`Failed to add team member: ${error.message}`);
   }
 }

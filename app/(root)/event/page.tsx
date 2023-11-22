@@ -33,17 +33,19 @@ interface Event {
   interface Props {
     currentUserId: string;
     accountId: string;
+    authorId: string;
+    opponentId: string;
     accountType: string;
   }
-async function Event({ currentUserId, accountId, accountType }: Props) {
+async function Event({ currentUserId, accountId,opponentId, authorId, accountType }: Props) {
   let events: Event[];
 
   const searchParams = {}; 
-
+  
   try {
     const { events: fetchedEvents, isNext } = await fetchEvents(
         searchParams.page ? +searchParams.page : 1,
-        30
+        5
       );
       
       events = fetchedEvents;
@@ -56,7 +58,6 @@ async function Event({ currentUserId, accountId, accountType }: Props) {
     if (!userInfo?.onboarded) {
       redirect("/onboarding");
     }
-
     events.sort((a, b) => {
       const dateA = new Date(a.createdAt);
       const dateB = new Date(b.createdAt);
@@ -65,7 +66,7 @@ async function Event({ currentUserId, accountId, accountType }: Props) {
 
     return (
       <>
-        <h1 className="head-text text-left">Event</h1>
+        <h1 className="head-text text-left my-4">Event</h1>
 
         {events.map((event) => (
           <EventCard

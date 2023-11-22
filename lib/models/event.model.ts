@@ -1,21 +1,32 @@
 import mongoose from "mongoose";
 
+const teamSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  members: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+});
 
 const eventSchema = new mongoose.Schema({
-
   title: {
     type: String,
     required: true,
   },
-  location:{
+  location: {
     type: String,
     required: true,
   },
-  time:{
+  time: {
     type: Date,
     required: true,
   },
-  description:{
+  description: {
     type: String,
     required: true,
   },
@@ -24,9 +35,17 @@ const eventSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  opponent:{
+  opponent: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+    required: true,
+  },
+  team1: {
+    type: teamSchema,
+    required: true,
+  },
+  team2: {
+    type: teamSchema,
     required: true,
   },
   community: {
@@ -42,8 +61,6 @@ const eventSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
-
-
 
 const Event = mongoose.models.Event || mongoose.model("Event", eventSchema);
 

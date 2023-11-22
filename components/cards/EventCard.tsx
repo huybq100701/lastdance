@@ -49,10 +49,12 @@ function EventCard({
   createdAt,
   approve,
 }: Props) {
-
+  const isCurrentUserParticipant = () => {
+    return currentUserId === author.id || currentUserId === opponent.id;
+  };
   return (
     <div className="border border-gray-300 p-4 rounded-md shadow-md">
-      <div className="text-sm font-medium text-white-900">Team 1: </div>
+      <div className="text-sm font-medium text-white">Team 1: </div>
       <div className="flex flex-row gap-10">
         <div className="flex flex-col">
           <div className="flex items-center space-x-4">
@@ -68,12 +70,12 @@ function EventCard({
               </Link>
             </div>
             <div>
-              <div className="text-sm font-medium text-white-900">{author.name}</div>
+              <div className="text-sm font-medium text-white">{author.name}</div>
               <div className="text-sm text-gray-500">{formatDateString(createdAt)}</div>
             </div>
     
           </div>
-          <div className="text-sm font-medium text-white-900">Team 2: </div>
+          <div className="text-sm font-medium text-white">Team 2: </div>
           <div className="flex items-center space-x-4">
             <div className="flex-shrink-0">
               <Link href={`/profile/${opponent.id}`} className="relative h-10 w-10">
@@ -87,13 +89,13 @@ function EventCard({
               </Link>
             </div>
             <div>
-              <div className="text-sm font-medium text-white-900">{opponent.name}</div>
+              <div className="text-sm font-medium text-white">{opponent.name}</div>
             </div>
           </div>
-          <div className="mt-2 text-white-700">Title: {title}</div>
-          <div className="mt-2 text-white-700">Location: {location}</div>
-          <div className="mt-2 text-white-500">Description: {description}</div>
-          <div className="mt-2 text-white-500">
+          <div className="mt-2 text-white">Title: {title}</div>
+          <div className="mt-2 text-white">Location: {location}</div>
+          <div className="mt-2 text-white">Description: {description}</div>
+          <div className="mt-2 text-white">
             Approve: {approve ? "Approved" : "Not Yet"}
           </div>
           <div className="mt-2 text-gray-500">{time}</div>

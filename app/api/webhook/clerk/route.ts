@@ -34,7 +34,6 @@ type Event = {
   type: EventType;
 };
 
-export const runtime = "edge"
 
 export const POST = async (request: Request) => {
   const payload = await request.json();
@@ -208,4 +207,3 @@ export const POST = async (request: Request) => {
     }
   }
 };
-

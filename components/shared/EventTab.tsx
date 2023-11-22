@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { fetchUser, fetchUserEvents } from "@/lib/actions/user.actions";
 import EventCard from "../cards/EventCard";
 import { currentUser } from "@clerk/nextjs";
-import PostEvent from "@/components/forms/PostEvent";
 
 interface Event {
   _id: string;

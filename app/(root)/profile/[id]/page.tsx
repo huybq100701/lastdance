@@ -154,8 +154,6 @@ async function Page({ params }: { params: { id: string } }) {
               />
             )}
           </TabsContent>
-
-
         </Tabs>
       </div>
     </section>

@@ -37,6 +37,12 @@ const communitySchema = new mongoose.Schema({
       ref: "Thread",
     },
   ],
+  events:[
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Event",
+    },
+  ],
   members: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -57,7 +63,9 @@ communitySchema.virtual("threadsCount").get(function () {
 communitySchema.virtual("followersCount").get(function () {
   return this.followers.length;
 });
-
+communitySchema.virtual("eventsCount").get(function () {
+  return this.events.length;
+});
 const Community =
   mongoose.models.Community || mongoose.model("Community", communitySchema);
 

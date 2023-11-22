@@ -177,3 +177,41 @@ export async function approveEvent(eventId: string, path: string ): Promise<void
     throw new Error(`Failed to approve event: ${error.message}`);
   }
 }
+
+export async function fetchEvents(pageNumber = 1, pageSize = 20) {
+  try {
+    // Connect to the database
+    await connectToDB();
+
+    // Calculate the number of events to skip based on the page number and page size
+    const skipAmount = (pageNumber - 1) * pageSize;
+
+    // Fetch events from the database
+    const eventsQuery = Event.find({})
+      .sort({ createdAt: "desc" })
+      .skip(skipAmount)
+      .limit(pageSize)
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id name image",
+      })
+      .populate({
+        path: "opponent",
+        model: User,
+        select: "_id name image",
+      })
+      .populate({
+        path: "community",
+        model: Community,
+        select: "_id name image",
+      });
+    const totalEventsCount = await Event.countDocuments({});
+    const events = await eventsQuery.exec();
+    const isNext = totalEventsCount > skipAmount + events.length;
+    return { events, isNext };
+  } catch (error) {
+
+ 
+  }
+}

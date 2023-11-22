@@ -155,6 +155,8 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
   }
 }
 
+
+
 interface Params {
   text: string;
   author: string;

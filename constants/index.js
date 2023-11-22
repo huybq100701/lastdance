@@ -23,11 +23,11 @@ export const sidebarLinks = [{
     route: "/create-thread",
     label: "Create Post",
   },
-  // {
-  //   imgURL: "/assets/calendar.svg",
-  //   route: "/calendar",
-  //   label: "Calendar",
-  // },
+  {
+    imgURL: "/assets/calendar.svg",
+    route: "/event",
+    label: "Event",
+  },
   {
     imgURL: "/assets/user.svg",
     route: "/profile",
@@ -54,7 +54,7 @@ export const profileTabs = [{
     value: "events",
     label: "Events",
     icon: "/assets/event.svg"
-  }
+  },
 ];
 
 // export const communityTabs = [{

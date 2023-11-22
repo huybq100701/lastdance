@@ -7,6 +7,8 @@ import DeleteEvent from "../forms/DeleteEvent";
 import { useState } from "react";
 import { approveEvent } from "@/lib/actions/event.actions";
 import ApproveEvent from "../forms/ApproveEvent";
+import ViewEvent from "../atoms/ViewEvent";
+
 
 interface Props {
   id: string;
@@ -107,6 +109,12 @@ function EventCard({
               currentUserId={currentUserId}
               authorId={author.id}
               opponentId={opponent.id}
+            />
+            <ViewEvent
+                eventId={JSON.stringify(id)}
+                currentUserId={currentUserId}
+                authorId={author.id}
+                opponentId={opponent.id}
             />
              { !approve && (
               <ApproveEvent

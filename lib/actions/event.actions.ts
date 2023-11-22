@@ -178,7 +178,7 @@ export async function approveEvent(eventId: string, path: string ): Promise<void
   }
 }
 
-export async function fetchEvents(pageNumber = 1, pageSize = 20) {
+export async function fetchEvents(pageNumber = 1, pageSize = 5) {
   try {
     // Connect to the database
     await connectToDB();

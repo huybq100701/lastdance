@@ -2,8 +2,10 @@ import { redirect } from "next/navigation";
 import { fetchUser, fetchUserEvents } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
 import EventCard from "@/components/cards/EventCard";
+
 import Pagination from "@/components/shared/Pagination";
 import { fetchEvents } from "@/lib/actions/event.actions";
+import EventUserCard from "@/components/cards/EventUserCard";
 
 interface Event {
     _id: string;
@@ -41,7 +43,7 @@ async function Event({ currentUserId, accountId,opponentId, authorId, accountTyp
   let events: Event[];
 
   const searchParams = {}; 
-  
+
   try {
     const { events: fetchedEvents, isNext } = await fetchEvents(
         searchParams.page ? +searchParams.page : 1,
@@ -58,6 +60,9 @@ async function Event({ currentUserId, accountId,opponentId, authorId, accountTyp
     if (!userInfo?.onboarded) {
       redirect("/onboarding");
     }
+
+    console.log(userInfo.id)
+
     events.sort((a, b) => {
       const dateA = new Date(a.createdAt);
       const dateB = new Date(b.createdAt);
@@ -69,7 +74,7 @@ async function Event({ currentUserId, accountId,opponentId, authorId, accountTyp
         <h1 className="head-text text-left my-4">Event</h1>
 
         {events.map((event) => (
-          <EventCard
+          <EventUserCard
             key={event._id}
             id={event._id}
             currentUserId={currentUserId}

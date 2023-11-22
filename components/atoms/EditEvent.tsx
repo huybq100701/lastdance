@@ -12,7 +12,6 @@ interface Props {
 const EditEvent = ({ eventId, currentUserId, authorId, opponentId }: Props) => {
   if (currentUserId !== authorId && currentUserId !== opponentId) return null;
 
-  
   return (
     <Link href={`/edit-event/${JSON.parse(eventId)}`}>
       <div className="cursor-pointer">

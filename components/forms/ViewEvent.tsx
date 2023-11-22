@@ -23,17 +23,16 @@ function ViewEvent({ eventId, currentUserId, authorId, opponentId, team1, team2 
         const fetchedTeam1Members = await fetchTeamMembers(team1);
         const fetchedTeam2Members = await fetchTeamMembers(team2);
  
-        setTeam1Members(fetchedTeam1Members || []); // Handle potential null or undefined
-        setTeam2Members(fetchedTeam2Members || []); // Handle potential null or undefined
+        setTeam1Members(fetchedTeam1Members || []); 
+        setTeam2Members(fetchedTeam2Members || []); 
       
-        // Check if the user has already joined a team
         if (fetchedTeam1Members && fetchedTeam1Members.includes(currentUserId)) {
           setUserTeam("team1");
         } else if (fetchedTeam2Members && fetchedTeam2Members.includes(currentUserId)) {
           setUserTeam("team2");
         }
       } catch (error) {
-        console.error("Error fetching team members:", error.message);
+
       }
 
     };
@@ -66,7 +65,6 @@ function ViewEvent({ eventId, currentUserId, authorId, opponentId, team1, team2 
         console.log("Cannot join Team 2");
       }
     } catch (error) {
-      console.error("Failed to join Team 2:", error.message);
     }
   };
 

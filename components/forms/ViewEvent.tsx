@@ -1,12 +1,12 @@
 'use client'
 import React, { useEffect, useState } from "react";
-import { fetchTeamMembers, addTeamMember } from "@/lib/actions/event.actions";
+import { fetchTeamMembers, addTeamMember, removeTeamMember } from "@/lib/actions/event.actions";
 import Link from "next/link";
 
 interface ViewEventProps {
   eventId: string;
   authorId: string;
-  opponentId:string;
+  opponentId: string;
   currentUserId: string;
   team1: string;
   team2: string;
@@ -14,7 +14,9 @@ interface ViewEventProps {
 
 function ViewEvent({
   eventId,
-  currentUserId, 
+  authorId,
+  opponentId,
+  currentUserId,
   team1,
   team2,
 }: ViewEventProps) {
@@ -28,9 +30,9 @@ function ViewEvent({
       try {
         setLoading(true);
 
-        const fetchedTeam1Members = await fetchTeamMembers(eventId, "team1"); 
-        const fetchedTeam2Members = await fetchTeamMembers(eventId, "team2"); 
-
+        const fetchedTeam1Members = await fetchTeamMembers(eventId, "team1");
+        const fetchedTeam2Members = await fetchTeamMembers(eventId, "team2");
+        
         setTeam1Members(fetchedTeam1Members || []);
         setTeam2Members(fetchedTeam2Members || []);
 
@@ -48,11 +50,10 @@ function ViewEvent({
 
     fetchMembers();
   }, [eventId, currentUserId]);
-
   const handleJoinTeam = async (team: "team1" | "team2") => {
     try {
       const oppositeTeam = team === "team1" ? "team2" : "team1";
-
+  
       if (
         userTeam !== team &&
         (team === "team1" ? team1Members : team2Members).length < 7 &&
@@ -60,11 +61,11 @@ function ViewEvent({
       ) {
         // Check if the user is a member of the opposite team and remove them
         if (oppositeTeam === "team2" && team1Members.includes(currentUserId)) {
-          setTeam1Members((prevTeam1Members) => prevTeam1Members?.filter((member) => member !== currentUserId) || []);
+          await removeTeamMember(eventId, "team1", currentUserId);
         } else if (oppositeTeam === "team1" && team2Members.includes(currentUserId)) {
-          setTeam2Members((prevTeam2Members) => prevTeam2Members?.filter((member) => member !== currentUserId) || []);
+          await removeTeamMember(eventId, "team2", currentUserId);
         }
-
+  
         // Add the user to the new team
         await addTeamMember(eventId, team, currentUserId);
         const updatedMembers = await fetchTeamMembers(eventId, team);
@@ -77,20 +78,47 @@ function ViewEvent({
       console.error(`Error joining ${team}:`, error);
       // Handle error (show message, log, etc.)
     }
+  };  
+
+  const handleRemoveMember = async (team: "team1" | "team2", member: string) => {
+    try {
+      console.log(`Before removal: ${team}Members`, team === "team1" ? team1Members : team2Members);
+    
+      await removeTeamMember(eventId, team, member);
+      const updatedMembers = await fetchTeamMembers(eventId, team);
+      updateTeamMembers(team, updatedMembers);
+    
+      console.log(`After removal: ${team}Members`, team === "team1" ? team1Members : team2Members);
+    } catch (error) {
+      console.error(`Error removing member from ${team}:`, error);
+    }
   };
+  
+  
 
   const updateTeamMembers = (team: "team1" | "team2", updatedMembers: string[]) => {
+    console.log(`Updating ${team}Members in state:`, updatedMembers);
+  
     if (team === "team1") {
       setTeam1Members((prevTeam1Members) => updatedMembers || []);
     } else {
       // If joining Team 2, remove from Team 1
       if (team === "team2" && team1Members.includes(currentUserId)) {
-        setTeam1Members((prevTeam1Members) => prevTeam1Members?.filter((member) => member !== currentUserId) || []);
+        setTeam1Members((prevTeam1Members) =>
+          prevTeam1Members?.filter((member) => member !== currentUserId) || []
+        );
       }
-
-      setTeam2Members((prevTeam2Members) => updatedMembers || []);
+  
+      // Update the members array inside the team2 object
+      setTeam2Members((prevTeam2Members) => {
+        const updatedTeam2 = { ...prevTeam2Members, members: updatedMembers };
+        return updatedTeam2;
+      });
     }
+  
+    console.log(`Updated ${team}Members in state:`, team === "team1" ? team1Members : team2Members);
   };
+  
 
   return (
     <div className="border border-gray-300 p-4 my-10 rounded-md shadow-md">
@@ -104,11 +132,29 @@ function ViewEvent({
             {team1Members.map((member, index) => (
               <li key={index} className="mb-2 text-white">
                 {member}
+                {(
+                  (currentUserId !== authorId && currentUserId !== opponentId) ||
+                  team2Members.includes(currentUserId) ||
+                  team1Members.includes(currentUserId)
+                ) && (
+                  <button
+                    onClick={() => handleRemoveMember("team1", member)}
+                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 ml-2"
+                  >
+                    X
+                  </button>
+                )}
+
               </li>
             ))}
           </ul>
           {userTeam !== "team1" && (
-            <button onClick={() => handleJoinTeam("team1")} className="bg-lime-500 text-white px-4 py-2 rounded hover:bg-green-600">Join Team 1</button>
+            <button
+              onClick={() => handleJoinTeam("team1")}
+              className="bg-lime-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            >
+              Join Team 1
+            </button>
           )}
         </div>
 
@@ -117,11 +163,31 @@ function ViewEvent({
           <h3 className="text-xl font-semibold mb-2 text-white">Team 2</h3>
           <ul className="list-none pl-0">
             {team2Members.map((member, index) => (
-              <li key={index} className="mb-2 text-white">{member}</li>
+              <li key={index} className="mb-2 text-white">
+                {member}
+               {(
+                (currentUserId !== authorId && currentUserId !== opponentId) ||
+                team2Members.includes(currentUserId) ||
+                team1Members.includes(currentUserId)
+              ) && (
+                <button
+                  onClick={() => handleRemoveMember("team2", member)}
+                  className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 ml-2"
+                >
+                  X
+                </button>
+              )}
+
+              </li>
             ))}
           </ul>
           {userTeam !== "team2" && (
-            <button onClick={() => handleJoinTeam("team2")} className="bg-lime-500 text-white px-4 py-2 rounded hover:bg-green-600">Join Team 2</button>
+            <button
+              onClick={() => handleJoinTeam("team2")}
+              className="bg-lime-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            >
+              Join Team 2
+            </button>
           )}
         </div>
       </div>

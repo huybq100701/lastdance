@@ -287,3 +287,45 @@ export async function addTeamMember(eventId: string, team: "team1" | "team2", me
     throw new Error(`Failed to add team member: ${error.message}`);
   }
 }
+
+export async function removeTeamMember(eventId: string, team: "team1" | "team2", memberId: string): Promise<void> {
+  try {
+    // Connect to the database
+    await connectToDB();
+
+    // Fetch the event by eventId
+    const event = await Event.findById(eventId)
+      .populate({
+        path: "author opponent",
+        model: User,
+        select: "_id",
+      })
+      .exec();
+
+    // Check if the event exists
+    if (!event) {
+      throw new Error("Event not found");
+    }
+
+    // Determine the team to update based on the selected team
+    const teamToUpdate = team === "team1" ? event.team1 : event.team2;
+
+    // Check if the member exists in the team
+    const memberIndex = teamToUpdate.members.indexOf(memberId);
+    if (memberIndex === 0) {
+      console.error(`Member with ID ${memberId} not found in ${team} members array`);
+      return; // Exit function gracefully since the member is not found
+    }
+
+    // Remove the member from the team
+    teamToUpdate.members.splice(memberIndex, 1);
+
+    // Save the changes to the event
+    await event.save();
+
+    console.log("Member removed successfully");
+  } catch (error: any) {
+    console.error(`Failed to remove team member: ${error.message}`);
+    throw error; // Re-throw the error to propagate it to the calling code
+  }
+}

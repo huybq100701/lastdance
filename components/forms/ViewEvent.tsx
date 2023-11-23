@@ -43,7 +43,8 @@ function ViewEvent({
         
         setTeam1Members(fetchedTeam1Members || []);
         setTeam2Members(fetchedTeam2Members || []);
-
+console.log(fetchedTeam1Members)
+console.log(fetchedTeam2Members)
         if (fetchedTeam1Members && fetchedTeam1Members.includes(currentUserId)) {
           setUserTeam("team1");
         } else if (fetchedTeam2Members && fetchedTeam2Members.includes(currentUserId)) {
@@ -68,21 +69,31 @@ function ViewEvent({
       if (
         userTeam !== team &&
         currentTeamMembers.length < 7 &&
-        !currentTeamMembers.includes(currentUserId)
+        !currentTeamMembers.includes(currentUserName)
       ) {
         // Check if the user is a member of the opposite team and remove them
-        if (oppositeTeam === "team2" && team1Members.includes(currentUserId)) {
-          await removeTeamMember(eventId, "team1", currentUserId);
-        } else if (oppositeTeam === "team1" && team2Members.includes(currentUserId)) {
-          await removeTeamMember(eventId, "team2", currentUserId);
+        if (oppositeTeam === "team2" && team1Members.includes(currentUserName)) {
+          await removeTeamMember(eventId, "team1", currentUserName);
+        } else if (oppositeTeam === "team1" && team2Members.includes(currentUserName)) {
+          await removeTeamMember(eventId, "team2", currentUserName);
         }
-  
+        
         // Check if the user is already a member of the new team
         if (!currentTeamMembers.includes(currentUserId)) {
           // Add the user to the new team
           await addTeamMember(eventId, team, currentUserId);
           const updatedMembers = await fetchTeamMembers(eventId, team);
           updateTeamMembers(team, updatedMembers);
+  
+          // Remove the user from the old team
+          const oldTeam = oppositeTeam === "team1" ? "team1" : "team2";
+          const oldTeamIndex = team1Members.indexOf(currentUserName);
+          if (oldTeamIndex !== -1) {
+            const updatedOldTeamMembers = [...team1Members];
+            updatedOldTeamMembers.splice(oldTeamIndex, 1);
+            updateTeamMembers(oldTeam, updatedOldTeamMembers);
+          }
+  
           setUserTeam(team);
         } else {
           console.log(`User is already a member of ${team}`);
@@ -104,8 +115,7 @@ function ViewEvent({
   
       const updatedTeam1Members = fetchedTeam1Members || [];
       const updatedTeam2Members = fetchedTeam2Members || [];
-      console.log(currentUserName);
-      console.log(memberName);
+
   
       // Check if the user has permission to remove a member
       const hasPermission =

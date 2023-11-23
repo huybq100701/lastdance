@@ -8,8 +8,15 @@ interface ViewEventProps {
   authorId: string;
   opponentId: string;
   currentUserId: string;
-  team1: string;
-  team2: string;
+  currentUserName: string;
+  team1: {
+    name: string;
+    members: string[]; 
+  };
+  team2: {
+    name: string;
+    members: string[]; 
+  };
 }
 
 function ViewEvent({
@@ -17,6 +24,7 @@ function ViewEvent({
   authorId,
   opponentId,
   currentUserId,
+  currentUserName,
   team1,
   team2,
 }: ViewEventProps) {
@@ -54,10 +62,13 @@ function ViewEvent({
     try {
       const oppositeTeam = team === "team1" ? "team2" : "team1";
   
+      // Fetch the current team members
+      const currentTeamMembers = team === "team1" ? team1Members : team2Members;
+  
       if (
         userTeam !== team &&
-        (team === "team1" ? team1Members : team2Members).length < 7 &&
-        !(team === "team1" ? team2Members : team1Members).includes(currentUserId)
+        currentTeamMembers.length < 7 &&
+        !currentTeamMembers.includes(currentUserId)
       ) {
         // Check if the user is a member of the opposite team and remove them
         if (oppositeTeam === "team2" && team1Members.includes(currentUserId)) {
@@ -66,11 +77,16 @@ function ViewEvent({
           await removeTeamMember(eventId, "team2", currentUserId);
         }
   
-        // Add the user to the new team
-        await addTeamMember(eventId, team, currentUserId);
-        const updatedMembers = await fetchTeamMembers(eventId, team);
-        updateTeamMembers(team, updatedMembers);
-        setUserTeam(team);
+        // Check if the user is already a member of the new team
+        if (!currentTeamMembers.includes(currentUserId)) {
+          // Add the user to the new team
+          await addTeamMember(eventId, team, currentUserId);
+          const updatedMembers = await fetchTeamMembers(eventId, team);
+          updateTeamMembers(team, updatedMembers);
+          setUserTeam(team);
+        } else {
+          console.log(`User is already a member of ${team}`);
+        }
       } else {
         console.log(`Cannot join ${team}`);
       }
@@ -78,22 +94,46 @@ function ViewEvent({
       console.error(`Error joining ${team}:`, error);
       // Handle error (show message, log, etc.)
     }
-  };  
-
-  const handleRemoveMember = async (team: "team1" | "team2", member: string) => {
+  };
+  
+  const handleRemoveMember = async (team: "team1" | "team2", memberName: string) => {
     try {
-      console.log(`Before removal: ${team}Members`, team === "team1" ? team1Members : team2Members);
-    
-      await removeTeamMember(eventId, team, member);
-      const updatedMembers = await fetchTeamMembers(eventId, team);
-      updateTeamMembers(team, updatedMembers);
-    
-      console.log(`After removal: ${team}Members`, team === "team1" ? team1Members : team2Members);
+      // Fetch the latest members before removing
+      const fetchedTeam1Members = await fetchTeamMembers(eventId, "team1");
+      const fetchedTeam2Members = await fetchTeamMembers(eventId, "team2");
+  
+      const updatedTeam1Members = fetchedTeam1Members || [];
+      const updatedTeam2Members = fetchedTeam2Members || [];
+      console.log(currentUserName);
+      console.log(memberName);
+  
+      // Check if the user has permission to remove a member
+      const hasPermission =
+        (team === "team1" && updatedTeam1Members[0] === currentUserName) ||
+        (team === "team2" && updatedTeam2Members[0] === currentUserName);
+  
+      if (hasPermission) {
+        // Find the member with the specified name
+        const removedMemberIndex = updatedTeam1Members.findIndex(member => member === memberName);
+  
+        if (removedMemberIndex !== -1) {
+          // Remove the member by index
+          updatedTeam1Members.splice(removedMemberIndex, 1);
+  
+          // Call the API to remove the member
+          await removeTeamMember(eventId, team, memberName);
+          // Update the state with the modified members list
+          updateTeamMembers(team, updatedTeam1Members);
+        } else {
+          console.log(`Member with name ${memberName} not found in ${team}`);
+        }
+      } else {
+        console.log(`User ${currentUserId} does not have permission to remove a member.`);
+      }
     } catch (error) {
       console.error(`Error removing member from ${team}:`, error);
     }
   };
-  
   
 
   const updateTeamMembers = (team: "team1" | "team2", updatedMembers: string[]) => {

@@ -21,7 +21,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
 
   // Assuming you have access to currentUserId from your user data
   const currentUserId = userInfo._id;
-
+  const currentUserName= userInfo.name
   return (
     <>
       <h1 className="head-text">Join Team</h1>
@@ -33,6 +33,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
         opponentId={opponentId}
         team1={event.team1.name}
         team2={event.team2.name}
+        currentUserName={currentUserName}
       />
     </>
   );

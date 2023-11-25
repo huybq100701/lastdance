@@ -43,8 +43,8 @@ function ViewEvent({
         
         setTeam1Members(fetchedTeam1Members || []);
         setTeam2Members(fetchedTeam2Members || []);
-console.log(fetchedTeam1Members)
-console.log(fetchedTeam2Members)
+        console.log(fetchedTeam1Members)
+        console.log(fetchedTeam2Members)
         if (fetchedTeam1Members && fetchedTeam1Members.includes(currentUserId)) {
           setUserTeam("team1");
         } else if (fetchedTeam2Members && fetchedTeam2Members.includes(currentUserId)) {
@@ -59,6 +59,8 @@ console.log(fetchedTeam2Members)
 
     fetchMembers();
   }, [eventId, currentUserId]);
+
+  
   const handleJoinTeam = async (team: "team1" | "team2") => {
     try {
       const oppositeTeam = team === "team1" ? "team2" : "team1";
@@ -146,29 +148,28 @@ console.log(fetchedTeam2Members)
   };
   
 
-  const updateTeamMembers = (team: "team1" | "team2", updatedMembers: string[]) => {
-    console.log(`Updating ${team}Members in state:`, updatedMembers);
-  
-    if (team === "team1") {
-      setTeam1Members((prevTeam1Members) => updatedMembers || []);
-    } else {
-      // If joining Team 2, remove from Team 1
-      if (team === "team2" && team1Members.includes(currentUserId)) {
-        setTeam1Members((prevTeam1Members) =>
-          prevTeam1Members?.filter((member) => member !== currentUserId) || []
-        );
-      }
-  
-      // Update the members array inside the team2 object
-      setTeam2Members((prevTeam2Members) => {
-        const updatedTeam2 = { ...prevTeam2Members, members: updatedMembers };
-        return updatedTeam2;
-      });
+const updateTeamMembers = (team: "team1" | "team2", updatedMembers: string[]) => {
+  console.log(`Updating ${team}Members in state:`, updatedMembers);
+
+  if (team === "team1") {
+    setTeam1Members(updatedMembers);
+  } else if (team === "team2") {
+    setTeam2Members(updatedMembers);
+
+    // If joining Team 2, remove from Team 1
+    if (team1Members.includes(currentUserId)) {
+      setTeam1Members((prevTeam1Members) =>
+        prevTeam1Members.filter((member) => member !== currentUserId)
+      );
     }
-  
-    console.log(`Updated ${team}Members in state:`, team === "team1" ? team1Members : team2Members);
-  };
-  
+  }
+
+  console.log(
+    `Updated ${team}Members in state:`,
+    team === "team1" ? team1Members : team2Members
+  );
+};
+
 
   return (
     <div className="border border-gray-300 p-4 my-10 rounded-md shadow-md">

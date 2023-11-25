@@ -34,7 +34,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "app/(root)/activity/page.tsx", "app/(root)/edit-event/[id]/page.tsx"  ],
   "exclude": [
     "node_modules"
   ]

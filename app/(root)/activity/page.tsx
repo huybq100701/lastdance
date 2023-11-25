@@ -95,6 +95,26 @@ async function Page() {
           <p className="!text-base-regular text-light-3">No approval yet</p>
         )}
       </section>
+
+      <h1 className="head-text">Team Join</h1>
+      <section className="flex flex-col gap-5">
+        {activity.length > 0 ? (
+          activity.map((activity: any) => (
+            <div key={activity._id}>
+              {activity.activityType === "teamJoin" && (
+                <article className="activity-card">
+                  <TeamComponent
+                    author={activity.author}
+                    teamJoined={activity.teamJoined}
+                  />
+                </article>
+              )}
+            </div>
+          ))
+        ) : (
+          <p className="!text-base-regular text-light-3">No team joins yet</p>
+        )}
+      </section>
     </>
   );
 }
@@ -176,5 +196,25 @@ const ApproveComponent = ({userInfo, author, opponent, activityType, title, appr
   </div>
 );
 
+const TeamComponent = ({ author, teamJoined }: any) => (
+  <p className="!text-small-regular text-light-1 flex items-center">
+    <Link key={author._id} href={`/profile/${author.id}`} className="flex items-center">
+      <Image
+        src={author.image}
+        alt="user_logo"
+        width={20}
+        height={20}
+        className="rounded-full object-cover"
+      />
+      <span className="text-primary-500 mx-2">{author.name}</span>
+    </Link>{" "}
+    {teamJoined && (
+      <>
+        joined a team: "
+        <span className="font-semibold">{teamJoined}</span>"
+      </>
+    )}
+  </p>
+);
 
 export default Page;

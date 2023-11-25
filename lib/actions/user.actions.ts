@@ -387,9 +387,29 @@ export async function getActivity(userId: string) {
         activityType: "approve",
       };
     });
-    
-    const activityPromises = await Promise.all([...replies, ...reactionsAndFollowers, ...eventActivity, ...approveActivity]);
-    
+    const teamJoinData = userEvents.map(async (event) => {
+      const author = await User.findOne({ _id: event.author });
+      const teamJoinActivity = {
+        author: {
+          name: author.name,
+          username: author.username,
+          image: author.image,
+          _id: author._id,
+          id: author.id,
+        },
+        activityType: "teamJoin",
+      };
+      return teamJoinActivity;
+    });
+
+    const activityPromises = await Promise.all([
+      ...replies,
+      ...reactionsAndFollowers,
+      ...eventActivity,
+      ...approveActivity,
+      ...teamJoinData,
+    ]);
+     
     const activity = activityPromises
       .filter((i) => i !== null)
       .sort((a, b) => b?.createdAt - a?.createdAt);

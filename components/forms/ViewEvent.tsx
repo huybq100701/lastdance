@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchTeamMembers, addTeamMember, removeTeamMember } from "@/lib/actions/event.actions";
 import Link from "next/link";
+import { getActivity } from "@/lib/actions/user.actions"; // Adjust the import path accordingly
 
 interface ViewEventProps {
   eventId: string;
@@ -95,7 +96,13 @@ function ViewEvent({
             updatedOldTeamMembers.splice(oldTeamIndex, 1);
             updateTeamMembers(oldTeam, updatedOldTeamMembers);
           }
-  
+          const teamJoinData = {
+            author: { id: currentUserId, name: currentUserName },
+            teamJoined: team === "team1" ? team1.name : team2.name,
+            createdAt: new Date(),
+          };
+          // Call the function to add the team join activity
+          await getActivity(teamJoinData);
           setUserTeam(team);
         } else {
           console.log(`User is already a member of ${team}`);

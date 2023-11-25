@@ -329,3 +329,5 @@ export async function removeTeamMember(eventId: string, team: "team1" | "team2",
     throw error; // Re-throw the error to propagate it to the calling code
   }
 }
+
+

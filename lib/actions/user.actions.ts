@@ -389,6 +389,10 @@ export async function getActivity(userId: string) {
     });
     const teamJoinData = userEvents.map(async (event) => {
       const author = await User.findOne({ _id: event.author });
+      const opponent = await  User.findOne({ _id: event.opponent });
+      const team1Members = await User.find({ _id: { $in: event.team1.members } });
+      const team2Members = await User.find({ _id: { $in: event.team2.members } });
+
       const teamJoinActivity = {
         author: {
           name: author.name,
@@ -397,11 +401,23 @@ export async function getActivity(userId: string) {
           _id: author._id,
           id: author.id,
         },
+        opponent: {
+          name: opponent.name,
+          username: opponent.username,
+          image: opponent.image,
+          _id: opponent._id,
+          id: opponent.id,
+        },
+        teamJoined: event.team1 ? "Team 1" : "Team 2",
+        eventId: event._id,
         activityType: "teamJoin",
+        createdAt: event.createdAt,
+        team1Members: team1Members,
+        team2Members: team2Members,
       };
       return teamJoinActivity;
     });
-
+    
     const activityPromises = await Promise.all([
       ...replies,
       ...reactionsAndFollowers,
@@ -409,7 +425,7 @@ export async function getActivity(userId: string) {
       ...approveActivity,
       ...teamJoinData,
     ]);
-     
+    
     const activity = activityPromises
       .filter((i) => i !== null)
       .sort((a, b) => b?.createdAt - a?.createdAt);

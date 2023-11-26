@@ -96,18 +96,19 @@ async function Page() {
         )}
       </section>
 
-      <h1 className="head-text">Team Join</h1>
+      <h1 className="head-text">Team</h1>
       <section className="flex flex-col gap-5">
         {activity.length > 0 ? (
           activity.map((activity: any) => (
             <div key={activity._id}>
               {activity.activityType === "teamJoin" && (
-                <article className="activity-card">
-                  <TeamComponent
-                    author={activity.author}
-                    teamJoined={activity.teamJoined}
-                  />
-                </article>
+                <TeamComponent
+                  author={activity.author}
+                  opponent={activity.opponent}
+                  teamJoined={activity.teamJoined}
+                  team1Members={activity.team1Members} 
+                  team2Members={activity.team2Members} 
+                />
               )}
             </div>
           ))
@@ -115,6 +116,7 @@ async function Page() {
           <p className="!text-base-regular text-light-3">No team joins yet</p>
         )}
       </section>
+
     </>
   );
 }
@@ -195,26 +197,87 @@ const ApproveComponent = ({userInfo, author, opponent, activityType, title, appr
     )}
   </div>
 );
-
-const TeamComponent = ({ author, teamJoined }: any) => (
-  <p className="!text-small-regular text-light-1 flex items-center">
-    <Link key={author._id} href={`/profile/${author.id}`} className="flex items-center">
-      <Image
-        src={author.image}
-        alt="user_logo"
-        width={20}
-        height={20}
-        className="rounded-full object-cover"
-      />
-      <span className="text-primary-500 mx-2">{author.name}</span>
-    </Link>{" "}
+const TeamComponent = ({ author, opponent, teamJoined, eventId, createdAt, team1Members, team2Members }: any) => (
+  <div>
+    <p className="!text-small-regular text-light-1 flex items-center">
     {teamJoined && (
-      <>
-        joined a team: "
-        <span className="font-semibold">{teamJoined}</span>"
-      </>
+        <>
+          Lead "<span className="font-semibold">{teamJoined}  </span>"  {' '}
+        </>
+      )}
+      {''}
+      <Link href={`/profile/${author.id}`} className="flex items-center">
+        <Image
+          src={author.image}
+          alt="user_logo"
+          width={20}
+          height={20}
+          className="rounded-full object-cover"
+        />
+        <span className="text-primary-500 mx-2">{author.name}</span>
+      </Link>
+    
+    </p>
+    {opponent && (
+      <p className="text-light-1">
+        Opponent: 
+        <Link href={`/profile/${opponent.id}`} className="flex items-center">
+          <Image
+            src={opponent.image}
+            alt="user_logo"
+            width={20}
+            height={20}
+            className="rounded-full object-cover"
+          />
+          <span className="text-primary-500 mx-2">{opponent.name}</span>
+        </Link>
+      </p>
     )}
-  </p>
+    {team1Members && team1Members.length > 0 && (
+      <div>
+        <p className="text-white">Team 1 Members: </p>
+        <ul className="flex list-none pl-0">
+          {team1Members.map((member: any, index: number) => (
+            <li key={member._id} className="flex items-center">
+              <Link href={`/profile/${member.id}`} className="flex items-center">
+                <Image
+                  src={member.image}
+                  alt="user_logo"
+                  width={20}
+                  height={20}
+                  className="rounded-full object-cover"
+                />
+                <span className="text-primary-500 mx-2">{member.name}</span>
+              </Link>
+              {index < team1Members.length - 1 && <span>,</span>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+    {team2Members && team2Members.length > 0 && (
+      <div>
+        <p className="text-white">Team 2 Members: </p>
+        <ul className="flex list-none pl-0">
+          {team2Members.map((member: any, index: number) => (
+            <li key={member._id} className="flex items-center">
+              <Link href={`/profile/${member.id}`} className="flex items-center">
+                <Image
+                  src={member.image}
+                  alt="user_logo"
+                  width={20}
+                  height={20}
+                  className="rounded-full object-cover"
+                />
+                <span className="text-primary-500 mx-2">{member.name}</span>
+              </Link>
+              {index < team2Members.length - 1 && <span>,</span>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
 );
 
 export default Page;
